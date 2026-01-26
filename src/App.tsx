@@ -1,16 +1,22 @@
 import { useState } from 'react';
 import SearchForm from './components/SearchForm';
 import ResultSection from './components/ResultSection';
+import { subwayData } from './data/SubwayData';
+import { findStationsByDistance } from './utils/BFS';
 
 const App: React.FC = () => {
   const [results, setResults] = useState<string[]>([]);
 
   const handleSearch = (startStation: string, distance: number): void => {
-    console.log(`${startStation}역에서 ${distance}개 정거장 거리 검색`);
-    
-    // 추후 알고리즘 결과가 들어올 자리
-    const mockData: string[] = ['강남역', '잠실역', '홍대입구역']; 
-    setResults(mockData);
+    // 1. 알고리즘 실행
+    const foundStations = findStationsByDistance(subwayData, startStation, distance);
+
+    // 2. 결과 상태 업데이트
+    setResults(foundStations);
+
+    if (foundStations.length === 0) {
+      alert("검색 결과가 없거나 잘못된 역 이름입니다.");
+    }
   };
 
   return (
@@ -22,7 +28,7 @@ const App: React.FC = () => {
         </header>
 
         <SearchForm onSearch={handleSearch} />
-        
+
         <ResultSection stations={results} />
       </div>
     </div>

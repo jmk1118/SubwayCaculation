@@ -13,3 +13,8 @@ export interface SearchFormProps {
 export interface ResultSectionProps {
     stations: string[]; // 결과로 나온 역 이름 리스트
 }
+
+// 지하철 노선도 데이터
+export interface SubwayGraph {
+    [stationName: string]: string[];
+}
