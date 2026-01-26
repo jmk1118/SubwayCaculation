@@ -1,13 +1,18 @@
 import React, { useState } from 'react';
 import { type SearchFormProps } from '../types';
+import { subwayData } from '../data/SubwayData';
 
 const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
   const [station, setStation] = useState<string>('');
   const [distance, setDistance] = useState<number>(1);
+  const stationNames = Array.from(new Set(Object.values(subwayData).map(s => s.name)));
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    if (!station.trim()) return alert('역 이름을 입력하세요!');
+
+    if (!station.trim()) 
+        return alert('역 이름을 입력하세요!');
+
     onSearch(station, distance);
   };
 
@@ -18,10 +23,14 @@ const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
         <input
           type="text"
           value={station}
+          list="station-list"
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStation(e.target.value)}
           placeholder="예: 강남"
           className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
+        <datalist id="station-list">
+          {stationNames.map(name => <option key={name} value={name} />)}
+        </datalist>
       </div>
 
       <div>
