@@ -1,35 +1,32 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import SearchForm from './components/SearchForm';
+import ResultSection from './components/ResultSection';
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: React.FC = () => {
+  const [results, setResults] = useState<string[]>([]);
+
+  const handleSearch = (startStation: string, distance: number): void => {
+    console.log(`${startStation}역에서 ${distance}개 정거장 거리 검색`);
+    
+    // 추후 알고리즘 결과가 들어올 자리
+    const mockData: string[] = ['강남역', '잠실역', '홍대입구역']; 
+    setResults(mockData);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="min-h-screen bg-gray-50 py-10 px-4">
+      <div className="max-w-md mx-auto space-y-8">
+        <header className="text-center">
+          <h1 className="text-3xl font-bold text-blue-600">Subway Finder</h1>
+          <p className="text-gray-500 mt-2">입력한 거리만큼 떨어진 역을 찾아보세요.</p>
+        </header>
 
-export default App
+        <SearchForm onSearch={handleSearch} />
+        
+        <ResultSection stations={results} />
+      </div>
+    </div>
+  );
+};
+
+export default App;
