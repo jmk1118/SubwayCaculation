@@ -9,6 +9,7 @@ export interface StationNode {
 // 검색 폼의 Props 타입
 export interface SearchFormProps {
     onSearch: (stationName: string, distance: number) => void;
+    graph: SubwayGraph | null;
 }
   
 // 결과 섹션의 Props 타입

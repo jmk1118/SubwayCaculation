@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { type SearchFormProps } from '../types';
-import { subwayData } from '../data/SubwayData';
 
-const SearchForm: React.FC<SearchFormProps> = ({ onSearch }) => {
+const SearchForm: React.FC<SearchFormProps> = ({ onSearch, graph }) => {
   const [station, setStation] = useState<string>('');
   const [distance, setDistance] = useState<number>(1);
-  const stationNames = Array.from(new Set(Object.values(subwayData).map(s => s.name)));
+  const stationNames = graph ? Array.from(new Set(Object.values(graph).map(s => s.name))) : [];
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
