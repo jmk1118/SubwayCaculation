@@ -47,16 +47,37 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <div className="max-w-md mx-auto space-y-8">
-        <header className="text-center">
-          <h1 className="text-3xl font-bold text-blue-600">Subway Finder</h1>
-          <p className="text-gray-500 mt-2">입력한 거리만큼 떨어진 역을 찾아보세요.</p>
+    <div className="min-h-[100dvh] min-w-screen bg-gray-50 flex justify-center py-6 md:py-12 px-4">
+      <main className="w-full max-w-[480px] mx-auto space-y-8">
+        
+        {/* 헤더 영역 */}
+        <header className="text-center space-y-2">
+          <div className="inline-block p-3 bg-blue-100 rounded-2xl mb-2">
+            <span className="text-3xl">🚇</span>
+          </div>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Subway Distance Finder
+          </h1>
+          <p className="text-gray-500 font-medium">
+            입력한 거리만큼 떨어진 역을 찾아보세요.
+          </p>
         </header>
 
-        <SearchForm onSearch={handleSearch} graph={graph}/>
-        <ResultSection stations={results} />
-      </div>
+        {/* 메인 폼 영역 */}
+        <div className="w-full">
+          <SearchForm onSearch={handleSearch} graph={graph} />
+        </div>
+
+        {/* 결과 리스트 영역 */}
+        <div className="w-full">
+          <ResultSection stations={results} />
+        </div>
+
+        {/* 푸터 (선택 사항) */}
+        <footer className="text-center text-gray-400 text-xs pt-4">
+          © 2026 Subway Finder Project
+        </footer>
+      </main>
     </div>
   );
 };
