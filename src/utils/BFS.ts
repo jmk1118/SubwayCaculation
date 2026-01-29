@@ -1,16 +1,18 @@
-import { type SubwayGraph } from '../types';
+import { type SubwayGraph, type StationResult } from '../types';
 
 export const findStationsByDistance = (
     graph: SubwayGraph,
     startStationName: string,
     targetDistance: number
-): string[] => {
+): StationResult[] => {
     // 1. 예외 처리: 그래프에 해당 역이 없는 경우
     const startNodes = Object.values(graph).filter(node => node.name === startStationName);
     if (startNodes.length === 0) 
         return [];
 
-    const minDistanceByName: Record<string, number> = { [startStationName]: 0 };
+    const minDistanceByName: Record<string, { distance: number; line: string }> = { 
+        [startStationName]: { distance: 0, line: startNodes[0].line } 
+      };
     const visitedNodes = new Set<string>();
     const queue: [string, number][] = []; // [역 이름, 현재 거리]
 
@@ -32,8 +34,8 @@ export const findStationsByDistance = (
                     const nextDistance = currentDistance + 1;
         
                     // 이 이름의 역을 더 짧은 거리에서 만난 적이 있는지 확인
-                    if (!(neighborNode.name in minDistanceByName) || nextDistance < minDistanceByName[neighborNode.name]) {
-                    minDistanceByName[neighborNode.name] = nextDistance;
+                    if (!(neighborNode.name in minDistanceByName) || nextDistance < minDistanceByName[neighborNode.name].distance) {
+                    minDistanceByName[neighborNode.name] = { distance: nextDistance, line: neighborNode.line };;
                     }
         
                     visitedNodes.add(neighborId);
@@ -43,10 +45,8 @@ export const findStationsByDistance = (
         }
     }
 
-    // 전체 기록된 이름들 중, 정확히 목표 거리(targetDistance)가 '최소 거리'인 역들만 필터링
-    const finalResults = Object.keys(minDistanceByName).filter(
-        name => minDistanceByName[name] === targetDistance
-    );
-
-    return finalResults;
+    // 목표 거리에 해당하는 역들만 객체 형태로 반환
+    return Object.entries(minDistanceByName)
+        .filter(([name, info]) => info.distance === targetDistance)
+        .map(([name, info]) => ({ name, line: info.line }));
 };

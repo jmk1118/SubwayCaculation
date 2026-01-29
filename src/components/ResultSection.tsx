@@ -1,27 +1,31 @@
 import React from 'react';
-import { type ResultSectionProps } from '../types';
+import { type StationResult } from '../types';
 
-const ResultSection: React.FC<ResultSectionProps> = ({ stations }) => {
+// 호선별 색상 매핑 유틸리티
+const getLineColor = (line: string) => {
+  switch (line) {
+    case '2호선': return 'bg-green-500';
+    case '8호선': return 'bg-pink-500';
+    default: return 'bg-gray-400';
+  }
+};
+
+const ResultSection: React.FC<{ stations: StationResult[] }> = ({ stations }) => {
   return (
-    <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-700 px-1">검색 결과 ({stations.length})</h2>
-      
-      {stations.length > 0 ? (
-        <div className="grid grid-cols-1 gap-3">
-          {stations.map((name, index) => (
-            <div 
-              key={index} 
-              className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:border-blue-200 transition"
-            >
-              <span className="font-medium text-gray-800">{name}</span>
-            </div>
-          ))}
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {stations.map((station, index) => (
+        <div 
+          key={index}
+          className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 transition-transform active:scale-95"
+        >
+          <span className="font-bold text-gray-800 dark:text-slate-100">
+            {station.name}
+          </span>
+          <span className={`${getLineColor(station.line)} text-white text-xs px-2 py-1 rounded-lg font-medium`}>
+            {station.line}
+          </span>
         </div>
-      ) : (
-        <div className="text-center py-10 text-gray-400 border-2 border-dashed rounded-xl">
-          결과가 없습니다.
-        </div>
-      )}
+      ))}
     </div>
   );
 };

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import SearchForm from './components/SearchForm';
 import ResultSection from './components/ResultSection';
-import { type SubwayGraph } from './types';
+import { type StationResult, type SubwayGraph } from './types';
 import { findStationsByDistance } from './utils/BFS';
 
 const App: React.FC = () => {
   const [graph, setGraph] = useState<SubwayGraph | null>(null);
-  const [results, setResults] = useState<string[]>([]);
+  const [results, setResults] = useState<StationResult[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // 1. 컴포넌트 마운트 시 데이터 로드

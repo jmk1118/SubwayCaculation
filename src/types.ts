@@ -5,16 +5,17 @@ export interface StationNode {
     line: string;     // "2호선"
     neighbors: string[]; // 연결된 StationNode의 id 리스트
 }
+
+// 결과로 나온 역 데이터 구조
+export interface StationResult {
+    name: string;
+    line: string;
+}
   
 // 검색 폼의 Props 타입
 export interface SearchFormProps {
     onSearch: (stationName: string, distance: number) => void;
     graph: SubwayGraph | null;
-}
-  
-// 결과 섹션의 Props 타입
-export interface ResultSectionProps {
-    stations: string[]; // 결과로 나온 역 이름 리스트
 }
 
 // 지하철 노선도 데이터
