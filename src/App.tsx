@@ -11,18 +11,31 @@ const App: React.FC = () => {
 
   // 1. 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
-    fetch('/data/subway.json')
-      .then((res) => {
-        return res.json();
-      })
-      .then((data: SubwayGraph) => {
-        setGraph(data);
+    const lines = ['line2', 'line8'];
+
+    const loadAllLines = async () => {
+      try {
+        setIsLoading(true);
+        
+        // 모든 JSON 파일을 동시에 fetch
+        const requests = lines.map(line => 
+          fetch(`/data/${line}.json`).then(res => res.json())
+        );
+        
+        const results = await Promise.all(requests);
+        
+        // 가져온 데이터들을 하나의 객체로 통합 (Object.assign)
+        const combinedGraph: SubwayGraph = Object.assign({}, ...results);
+        
+        setGraph(combinedGraph);
+      } catch (error) {
+        console.error("데이터 통합 로드 실패:", error);
+      } finally {
         setIsLoading(false);
-      })
-      .catch((err) => {
-        console.error("데이터 로드 실패:", err);
-        setIsLoading(false);
-      });
+      }
+    };
+
+    loadAllLines();
   }, []);
 
   const handleSearch = (startStation: string, distance: number): void => {
