@@ -47,6 +47,6 @@ export const findStationsByDistance = (
 
     // 목표 거리에 해당하는 역들만 객체 형태로 반환
     return Object.entries(minDistanceByName)
-        .filter(([name, info]) => info.distance === targetDistance)
+        .filter(([_, info]) => info.distance === targetDistance)
         .map(([name, info]) => ({ name, line: info.line }));
 };
