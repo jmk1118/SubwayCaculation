@@ -11,7 +11,7 @@ const App: React.FC = () => {
 
   // 1. 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
-    const lines = ['line2', 'line8'];
+    const lines = ['line1', 'line2', 'line8'];
 
     const loadAllLines = async () => {
       try {
