@@ -22,3 +22,7 @@ export interface SearchFormProps {
 export interface SubwayGraph {
     [nodeId: string]: StationNode;
 }
+
+export interface StationIndexMap {
+    [name: string]: string[];
+  }

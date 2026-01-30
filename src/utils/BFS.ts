@@ -1,25 +1,25 @@
-import { type SubwayGraph, type StationResult } from '../types';
+import { type SubwayGraph, type StationResult, type StationIndexMap } from '../types';
 
 export const findStationsByDistance = (
     graph: SubwayGraph,
+    stationIndex: StationIndexMap,
     startStationName: string,
     targetDistance: number
 ): StationResult[] => {
-    // 1. 예외 처리: 그래프에 해당 역이 없는 경우
-    const startNodes = Object.values(graph).filter(node => node.name === startStationName);
-    if (startNodes.length === 0) 
+    const startNodeIds = stationIndex[startStationName];
+    if (!startNodeIds || startNodeIds.length === 0) 
         return [];
 
     const minDistanceByName: Record<string, { distance: number; line: string }> = { 
-        [startStationName]: { distance: 0, line: startNodes[0].line } 
+        [startStationName]: { distance: 0, line: graph[startNodeIds[0]].line } 
       };
     const visitedNodes = new Set<string>();
     const queue: [string, number][] = []; // [역 이름, 현재 거리]
 
     // 시작점이 환승역이라면 모든 호선의 강남역을 큐에 넣음
-    startNodes.forEach(node => {
-        queue.push([node.id, 0]);
-        visitedNodes.add(node.id);
+    startNodeIds.forEach(id => {
+        queue.push([id, 0]);
+        visitedNodes.add(id);
     });
 
     while (queue.length > 0) {
@@ -35,7 +35,7 @@ export const findStationsByDistance = (
         
                     // 이 이름의 역을 더 짧은 거리에서 만난 적이 있는지 확인
                     if (!(neighborNode.name in minDistanceByName) || nextDistance < minDistanceByName[neighborNode.name].distance) {
-                    minDistanceByName[neighborNode.name] = { distance: nextDistance, line: neighborNode.line };;
+                        minDistanceByName[neighborNode.name] = { distance: nextDistance, line: neighborNode.line };;
                     }
         
                     visitedNodes.add(neighborId);

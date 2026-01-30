@@ -1,49 +1,55 @@
 import { useState, useEffect } from 'react';
 import SearchForm from './components/SearchForm';
 import ResultSection from './components/ResultSection';
-import { type StationResult, type SubwayGraph } from './types';
+import { type StationIndexMap, type SubwayGraph, type StationResult } from './types';
 import { findStationsByDistance } from './utils/BFS';
 
 const App: React.FC = () => {
   const [graph, setGraph] = useState<SubwayGraph | null>(null);
   const [results, setResults] = useState<StationResult[]>([]);
+  const [stationIndex, setStationIndex] = useState<StationIndexMap>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // 1. 컴포넌트 마운트 시 데이터 로드
   useEffect(() => {
     const lines = ['line1', 'line2', 'line8'];
 
-    const loadAllLines = async () => {
+    const loadData = async () => {
       try {
         setIsLoading(true);
         
-        // 모든 JSON 파일을 동시에 fetch
-        const requests = lines.map(line => 
-          fetch(`/data/${line}.json`).then(res => res.json())
-        );
-        
+        const requests = lines.map(line => fetch(`/data/${line}.json`).then(res => res.json()));
         const results = await Promise.all(requests);
-        
-        // 가져온 데이터들을 하나의 객체로 통합 (Object.assign)
-        const combinedGraph: SubwayGraph = Object.assign({}, ...results);
-        
+        const combinedGraph: SubwayGraph = Object.assign({}, ...results);  
         setGraph(combinedGraph);
-      } catch (error) {
+
+        const index: StationIndexMap = {};
+        Object.keys(combinedGraph).forEach(id => {
+          const name = combinedGraph[id].name;
+
+          if (!index[name]) 
+            index[name] = [];
+          index[name].push(id);
+        });
+        setStationIndex(index);
+      } 
+      catch (error) {
         console.error("데이터 통합 로드 실패:", error);
-      } finally {
+      } 
+      finally {
         setIsLoading(false);
       }
     };
 
-    loadAllLines();
+    loadData();
   }, []);
 
   const handleSearch = (startStation: string, distance: number): void => {
 
-    if (!graph) 
+    if (!graph || !stationIndex) 
       return;
 
-    const foundStations = findStationsByDistance(graph, startStation, distance);
+    const foundStations = findStationsByDistance(graph, stationIndex, startStation, distance);
     setResults(foundStations);
 
     if (foundStations.length === 0) {
