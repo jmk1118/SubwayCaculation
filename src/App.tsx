@@ -6,7 +6,7 @@ import { findStationsByDistance } from './utils/BFS';
 
 const App: React.FC = () => {
   const [graph, setGraph] = useState<SubwayGraph | null>(null);
-  const [results, setResults] = useState<StationResult[]>([]);
+  const [searchResults, setSearchResults] = useState<StationResult[]>([]);
   const [stationIndex, setStationIndex] = useState<StationIndexMap>({});
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -43,19 +43,6 @@ const App: React.FC = () => {
 
     loadData();
   }, []);
-
-  const handleSearch = (startStation: string, distance: number): void => {
-
-    if (!graph || !stationIndex) 
-      return;
-
-    const foundStations = findStationsByDistance(graph, stationIndex, startStation, distance);
-    setResults(foundStations);
-
-    if (foundStations.length === 0) {
-      alert("검색 결과가 없거나 잘못된 역 이름입니다.");
-    }
-  };
 
   const useDarkMode = () => {
     const [isDark, setIsDark] = useState(
@@ -117,14 +104,20 @@ const App: React.FC = () => {
         </header>
 
         {/* 메인 폼 영역 */}
-        <div className="w-full">
-          <SearchForm onSearch={handleSearch} graph={graph} />
-        </div>
-
-        {/* 결과 리스트 영역 */}
-        <div className="w-full">
-          <ResultSection stations={results} />
-        </div>
+        {graph && stationIndex ? (
+          <>
+            <SearchForm 
+              stationIndex={stationIndex} 
+              onSearch={(name, dist) => {
+                const results = findStationsByDistance(graph, stationIndex, name, dist);
+                setSearchResults(results);
+              }} 
+            />
+            <ResultSection stations={searchResults} />
+          </>
+        ) : (
+          <div className="text-center py-20">데이터를 불러오는 중...</div>
+        )}
 
         {/* 푸터 (선택 사항) */}
         <footer className="text-center text-gray-400 text-xs pt-4">
