@@ -6,6 +6,7 @@ const getLineColor = (line: string) => {
   switch (line) {
     case '1호선': return 'bg-blue-900';
     case '2호선': return 'bg-green-500';
+    case '3호선': return 'bg-orange-500';
     case '8호선': return 'bg-pink-500';
     default: return 'bg-gray-400';
   }
