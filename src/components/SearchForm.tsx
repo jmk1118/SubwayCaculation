@@ -55,15 +55,24 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         }
     };
 
+    const updateDistance = (next: number) => {
+        const clamped = next > 100 ? 100 : next < 1 ? 1 : next;
+        setDistance(clamped);
+        if (searchTerm.trim() && clamped > 0) {
+            onSearch(searchTerm, clamped);
+            setShowAutocomplete(false);
+        }
+    };
+
     // 거리 증감 함수
-    const handleDecrement = () => setDistance(prev => (prev > 0 ? prev - 1 : prev));
-    const handleIncrement = () => setDistance(prev => (prev < 100 ? prev + 1 : prev));
+    const handleDecrement = () => updateDistance(distance - 1);
+    const handleIncrement = () => updateDistance(distance + 1);
 
     // 입력값 유효성 검사 및 저장
     const handleDistanceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = parseInt(e.target.value);
         if (!isNaN(val)) {
-            setDistance(val > 100 ? 100 : val < 1 ? 1 : val);
+            updateDistance(val);
         } else if (e.target.value === "") {
             setDistance(0); // 빈 칸일 경우 기본값
         }
@@ -145,13 +154,6 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                     </div>
                 </div>
 
-                {/* 3. 검색 버튼 */}
-                <button
-                    type="submit"
-                    className="w-full p-4 mt-2 rounded-2xl font-bold text-lg transition-all active:scale-[0.98]bg-blue-600 text-slate-900 shadow-lg shadow-blue-200 hover:bg-blue-700"
-                >
-                    탐색하기
-                </button>
             </div>
         </form>
     );
