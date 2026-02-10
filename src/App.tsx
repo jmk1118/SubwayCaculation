@@ -110,7 +110,19 @@ const App: React.FC = () => {
               stationIndex={stationIndex} 
               onSearch={(name, dist) => {
                 const results = findStationsByDistance(graph, stationIndex, name, dist);
-                setSearchResults(results);
+
+                const sortedResults = [...results].sort((a, b) => {
+                  const lineA = parseInt(a.line.replace(/[^0-9]/g, "")) || 0;
+                  const lineB = parseInt(b.line.replace(/[^0-9]/g, "")) || 0;
+                
+                  if (lineA !== lineB) {
+                    return lineA - lineB;
+                  }
+                
+                  return a.name.localeCompare(b.name);
+                });
+
+                setSearchResults(sortedResults);
               }} 
             />
             <ResultSection stations={searchResults} />
