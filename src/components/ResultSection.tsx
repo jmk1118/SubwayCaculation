@@ -12,6 +12,7 @@ const getLineColor = (line: string) => {
     case '6호선': return 'bg-orange-700';
     case '7호선': return 'bg-olive-600';
     case '8호선': return 'bg-pink-500';
+    case '9호선': return 'bg-yellow-600';
     default: return 'bg-gray-400';
   }
 };
