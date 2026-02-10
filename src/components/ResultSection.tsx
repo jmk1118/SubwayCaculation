@@ -23,9 +23,9 @@ const ResultSection: React.FC<{ stations: StationResult[] }> = ({ stations }) =>
             {stations.map((station, index) => (
                 <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-gray-100 dark:border-slate-700 transition-transform active:scale-95"
+                    className="flex items-center justify-between p-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-transform active:scale-95"
                 >
-                    <span className="font-bold text-gray-800 dark:text-slate-100">
+                    <span className="font-bold text-gray-800">
                         {station.name}
                     </span>
                     <span className={`${getLineColor(station.line)} text-white text-xs px-2 py-1 rounded-lg font-medium`}>

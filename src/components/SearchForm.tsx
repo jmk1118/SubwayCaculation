@@ -75,7 +75,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
                 {/* 1. 역 이름 입력부 (생략 - 기존 유지) */}
                 <div className="relative w-full" ref={wrapperRef}>
-                    <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1 ml-1">
+                    <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
                         출발역
                     </label>
                     <input
@@ -84,22 +84,22 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                         onChange={handleInputChange}
                         onFocus={() => searchTerm && setShowAutocomplete(true)}
                         placeholder="역 이름을 입력하세요 (예: 잠실)"
-                        className="w-full p-4 rounded-2xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                        className="w-full p-4 rounded-2xl border border-gray-200 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                     />
                     <Autocomplete suggestions={suggestions} onSelect={handleSelect} visible={showAutocomplete} />
                 </div>
 
                 {/* 2. 거리 조절부 (개선된 증감 버튼 UI) */}
                 <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-500 dark:text-slate-400 mb-1 ml-1">
+                    <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
                         이동 거리 (정거장 수)
                     </label>
-                    <div className="flex items-center gap-2 p-1 bg-gray-50 dark:bg-slate-900 rounded-2xl border border-gray-200 dark:border-slate-700">
+                    <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-200">
 
                         <button
                             type="button"
                             onClick={handleDecrement}
-                            className="w-14 h-14 flex items-center justify-center bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 rounded-xl shadow-sm active:scale-90 transition-all"
+                            className="w-14 h-14 flex items-center justify-center bg-white text-gray-600 rounded-xl shadow-sm active:scale-90 transition-all"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -117,15 +117,15 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                                     onBlur={() => setIsEditing(false)}
                                     onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
                                     // appearance-none을 추가하여 브라우저 기본 스타일을 한 번 더 방어합니다.
-                                    className="w-16 text-2xl font-black text-center bg-transparent text-blue-600 dark:text-blue-400 outline-none appearance-none"
+                                    className="w-16 text-2xl font-black text-center bg-transparent text-blue-600 outline-none appearance-none"
                                     style={{ MozAppearance: 'textfield' }} // Firefox 호환성
                                 />
                             ) : (
                                 <div
                                     onClick={() => setIsEditing(true)}
-                                    className="cursor-pointer py-2 px-4 hover:bg-gray-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+                                    className="cursor-pointer py-2 px-4 hover:bg-gray-100 rounded-lg transition-colors"
                                 >
-                                    <span className="text-2xl font-black text-blue-600 dark:text-blue-400">
+                                    <span className="text-2xl font-black text-blue-600">
                                         {distance}
                                     </span>
                                     <span className="text-sm text-gray-400 ml-1 font-medium">역</span>
@@ -136,7 +136,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                         <button
                             type="button"
                             onClick={handleIncrement}
-                            className="w-14 h-14 flex items-center justify-center bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 rounded-xl shadow-sm active:scale-90 transition-all"
+                            className="w-14 h-14 flex items-center justify-center bg-white text-gray-600 rounded-xl shadow-sm active:scale-90 transition-all"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -148,11 +148,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                 {/* 3. 검색 버튼 */}
                 <button
                     type="submit"
-                    className="w-full p-4 mt-2 rounded-2xl font-bold text-lg transition-all active:scale-[0.98]
-            /* 라이트 모드 (기본) */
-            bg-blue-600 text-slate-900 shadow-lg shadow-blue-200 hover:bg-blue-700
-            /* 다크 모드 (반드시 dark: 접두사가 앞에 와야 함) */
-            dark:bg-slate-800 dark:text-white dark:shadow-none dark:hover:bg-slate-700 dark:border dark:border-slate-700"
+                    className="w-full p-4 mt-2 rounded-2xl font-bold text-lg transition-all active:scale-[0.98]bg-blue-600 text-slate-900 shadow-lg shadow-blue-200 hover:bg-blue-700"
                 >
                     탐색하기
                 </button>

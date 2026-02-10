@@ -44,39 +44,6 @@ const App: React.FC = () => {
         loadData();
     }, []);
 
-    const useDarkMode = () => {
-        const [isDark, setIsDark] = useState(
-            () => localStorage.getItem('theme') === 'dark' ||
-                (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-        );
-
-        useEffect(() => {
-            const root = window.document.documentElement;
-            if (isDark) {
-                root.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                root.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-            }
-        }, [isDark]);
-
-        return [isDark, setIsDark] as const;
-    };
-
-    const ThemeToggle = () => {
-        const [isDark, setIsDark] = useDarkMode();
-
-        return (
-            <button
-                onClick={() => setIsDark(!isDark)}
-                className="fixed top-6 right-6 p-3 rounded-2xl bg-white dark:bg-slate-800 shadow-lg border border-gray-200 dark:border-slate-700 transition-all active:scale-95"
-            >
-                {isDark ? '🌙' : '☀️'}
-            </button>
-        );
-    };
-
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -86,8 +53,7 @@ const App: React.FC = () => {
     }
 
     return (
-        <div className="min-h-[100dvh] min-w-screen bg-gray-50 flex justify-center py-6 md:py-12 px-4 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500">
-            <ThemeToggle />
+        <div className="min-h-[100dvh] min-w-screen bg-gray-50 flex justify-center py-6 md:py-12 px-4 text-slate-900 transition-colors duration-500">
             <main className="w-full max-w-[480px] mx-auto space-y-8">
 
                 {/* 헤더 영역 */}
@@ -95,7 +61,7 @@ const App: React.FC = () => {
                     <div className="inline-block p-3 bg-blue-100 rounded-2xl mb-2">
                         <span className="text-3xl">🚇</span>
                     </div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">
+                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
                         Subway Distance Finder
                     </h1>
                     <p className="text-gray-500 font-medium">
