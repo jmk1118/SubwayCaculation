@@ -7,12 +7,12 @@ export const findStationsByDistance = (
     targetDistance: number
 ): StationResult[] => {
     const startNodeIds = stationIndex[startStationName];
-    if (!startNodeIds || startNodeIds.length === 0) 
+    if (!startNodeIds || startNodeIds.length === 0)
         return [];
 
-    const minDistanceByName: Record<string, { distance: number; line: string }> = { 
-        [startStationName]: { distance: 0, line: graph[startNodeIds[0]].line } 
-      };
+    const minDistanceByName: Record<string, { distance: number; line: string }> = {
+        [startStationName]: { distance: 0, line: graph[startNodeIds[0]].line }
+    };
     const visitedNodes = new Set<string>();
     const queue: [string, number][] = []; // [역 이름, 현재 거리]
 
@@ -32,12 +32,12 @@ export const findStationsByDistance = (
                 if (!visitedNodes.has(neighborId)) {
                     const neighborNode = graph[neighborId];
                     const nextDistance = currentDistance + 1;
-        
+
                     // 이 이름의 역을 더 짧은 거리에서 만난 적이 있는지 확인
                     if (!(neighborNode.name in minDistanceByName) || nextDistance < minDistanceByName[neighborNode.name].distance) {
                         minDistanceByName[neighborNode.name] = { distance: nextDistance, line: neighborNode.line };;
                     }
-        
+
                     visitedNodes.add(neighborId);
                     queue.push([neighborId, nextDistance]);
                 }

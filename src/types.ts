@@ -11,7 +11,7 @@ export interface StationResult {
     name: string;
     line: string;
 }
-  
+
 // 검색 폼의 Props 타입
 export interface SearchFormProps {
     onSearch: (stationName: string, distance: number) => void;
@@ -25,4 +25,4 @@ export interface SubwayGraph {
 
 export interface StationIndexMap {
     [name: string]: string[];
-  }
+}
