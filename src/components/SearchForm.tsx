@@ -16,6 +16,39 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
+    const normalizeStationText = (value: string) => value.replace(/\s+/g, "").trim();
+    const removeStationSuffix = (value: string) => value.endsWith("역") ? value.slice(0, -1) : value;
+
+    const findExactStationName = (query: string) => {
+        if (!query)
+            return "";
+        if (stationIndex[query])
+            return query;
+
+        const normalizedQuery = normalizeStationText(query);
+        return Object.keys(stationIndex).find(
+            (name) => normalizeStationText(name) === normalizedQuery
+        ) ?? "";
+    };
+
+    const resolveStationName = (rawName: string) => {
+        const trimmed = rawName.trim();
+        if (!trimmed)
+            return "";
+
+        // 데이터에 실제로 "...역" 형태가 있을 수 있으므로 원본 우선 확인
+        const rawMatched = findExactStationName(trimmed);
+        if (rawMatched)
+            return rawMatched;
+
+        const withoutSuffix = removeStationSuffix(trimmed);
+        const suffixMatched = findExactStationName(withoutSuffix);
+        if (suffixMatched)
+            return suffixMatched;
+
+        return normalizeStationText(withoutSuffix);
+    };
+
     // 외부 클릭 시 자동완성 닫기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -30,10 +63,14 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchTerm(value);
+        const keyword = normalizeStationText(removeStationSuffix(value));
 
         if (value.trim().length > 0) {
             const filtered = Object.keys(stationIndex)
-                .filter(name => name.includes(value))
+                .filter((name) => {
+                    const normalizedName = normalizeStationText(removeStationSuffix(name));
+                    return normalizedName.includes(keyword);
+                })
                 .slice(0, 8);
             setSuggestions(filtered);
             setShowAutocomplete(true);
@@ -50,8 +87,9 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (searchTerm.trim()) {
-            onSearch(searchTerm, distance);
+        const resolvedName = resolveStationName(searchTerm);
+        if (resolvedName) {
+            onSearch(resolvedName, distance);
             setShowAutocomplete(false);
         }
     };
@@ -59,8 +97,9 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
     const updateDistance = (next: number) => {
         const clamped = next > 100 ? 100 : next < 1 ? 1 : next;
         setDistance(clamped);
-        if (searchTerm.trim() && clamped > 0) {
-            onSearch(searchTerm, clamped);
+        const resolvedName = resolveStationName(searchTerm);
+        if (resolvedName && clamped > 0) {
+            onSearch(resolvedName, clamped);
             setShowAutocomplete(false);
         }
     };
