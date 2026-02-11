@@ -5,6 +5,25 @@ import ResultSection from './components/ResultSection';
 import { type StationIndexMap, type SubwayGraph, type StationResult } from './types';
 import { findStationsByDistance } from './utils/BFS';
 
+// 결과창 호선 정렬 우선순위 설정 (앞에 있을수록 먼저 노출)
+const LINE_SORT_ORDER = [
+    '1호선',
+    '2호선',
+    '3호선',
+    '4호선',
+    '5호선',
+    '6호선',
+    '7호선',
+    '8호선',
+    '9호선',
+    '분당선'
+] as const;
+
+const LINE_SORT_RANK = LINE_SORT_ORDER.reduce<Record<string, number>>((acc, line, index) => {
+    acc[line] = index;
+    return acc;
+}, {});
+
 const App: React.FC = () => {
     const [graph, setGraph] = useState<SubwayGraph | null>(null);
     const [searchResults, setSearchResults] = useState<StationResult[]>([]);
@@ -79,8 +98,8 @@ const App: React.FC = () => {
                                 const results = findStationsByDistance(graph, stationIndex, name, dist);
 
                                 const sortedResults = [...results].sort((a, b) => {
-                                    const lineA = parseInt(a.line.replace(/[^0-9]/g, "")) || 0;
-                                    const lineB = parseInt(b.line.replace(/[^0-9]/g, "")) || 0;
+                                    const lineA = LINE_SORT_RANK[a.line] ?? Number.MAX_SAFE_INTEGER;
+                                    const lineB = LINE_SORT_RANK[b.line] ?? Number.MAX_SAFE_INTEGER;
 
                                     if (lineA !== lineB) {
                                         return lineA - lineB;
