@@ -10,6 +10,7 @@ const App: React.FC = () => {
     const [searchResults, setSearchResults] = useState<StationResult[]>([]);
     const [stationIndex, setStationIndex] = useState<StationIndexMap>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
 
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {
@@ -55,6 +56,15 @@ const App: React.FC = () => {
 
     return (
         <div className="min-h-[100dvh] min-w-screen bg-gray-50 flex justify-center py-6 md:py-12 px-4 text-slate-900 transition-colors duration-500">
+            <button
+                type="button"
+                onClick={() => setIsGuideOpen(true)}
+                aria-label="사이트 사용법 보기"
+                className="fixed top-4 right-4 md:top-6 md:right-6 z-40 w-11 h-11 rounded-full bg-blue-600 text-white text-lg font-bold shadow-lg shadow-blue-200 active:scale-95 transition-transform"
+            >
+                ?
+            </button>
+
             <main className="w-full max-w-[480px] mx-auto space-y-8">
 
                 {/* 헤더 영역 */}
@@ -93,6 +103,35 @@ const App: React.FC = () => {
                     © 2026 Subway Finder Project
                 </footer>
             </main>
+
+            {isGuideOpen && (
+                <div
+                    className="fixed inset-0 z-50 bg-slate-900/45 backdrop-blur-[1px] flex items-center justify-center px-4"
+                    onClick={() => setIsGuideOpen(false)}
+                >
+                    <div
+                        className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="relative mb-4 flex items-center justify-center">
+                            <h2 className="text-xl font-black text-slate-900 text-center">사용법</h2>
+                            <button
+                                type="button"
+                                onClick={() => setIsGuideOpen(false)}
+                                aria-label="팝업 닫기"
+                                className="absolute right-0 w-8 h-8 rounded-lg bg-slate-100 text-slate-600 font-bold hover:bg-slate-200 transition-colors"
+                            >
+                                ×
+                            </button>
+                        </div>
+
+                        <ul className="text-sm text-slate-700 space-y-2 leading-relaxed text-center list-none p-0">
+                            <li>출발역과 원하는 이동 거리를 입력해주세요.</li>
+                            <li>환승하는 경우 이동 거리 1로 계산됩니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
