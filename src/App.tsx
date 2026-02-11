@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import Header from './components/Header';
 import SearchForm from './components/SearchForm';
 import ResultSection from './components/ResultSection';
 import { type StationIndexMap, type SubwayGraph, type StationResult } from './types';
@@ -57,17 +58,7 @@ const App: React.FC = () => {
             <main className="w-full max-w-[480px] mx-auto space-y-8">
 
                 {/* 헤더 영역 */}
-                <header className="text-center space-y-2">
-                    <div className="inline-block p-3 bg-blue-100 rounded-2xl mb-2">
-                        <span className="text-3xl">🚇</span>
-                    </div>
-                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                        Subway Distance Finder
-                    </h1>
-                    <p className="text-gray-500 font-medium">
-                        입력한 거리만큼 떨어진 역을 찾아보세요.
-                    </p>
-                </header>
+                <Header/>
 
                 {/* 메인 폼 영역 */}
                 {graph && stationIndex ? (
