@@ -44,6 +44,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
     const handleSelect = (name: string) => {
         setSearchTerm(name);
+        onSearch(name, distance);
         setShowAutocomplete(false);
     };
 
