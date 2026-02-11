@@ -26,9 +26,12 @@ const ResultSection: React.FC<{ stations: StationResult[] }> = ({ stations }) =>
                     key={index}
                     className="flex items-center justify-between gap-2 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-transform active:scale-95"
                 >
-                    <span className="min-w-0 flex-1 font-bold text-gray-800 truncate">
-                        {station.name}
-                    </span>
+                    <div className="min-w-0 flex-1">
+                        <p className="font-bold text-gray-800 truncate">{station.name}</p>
+                        <p className="text-xs text-gray-500 mt-1 whitespace-nowrap">
+                            환승 {station.transferCount}회
+                        </p>
+                    </div>
                     <span className={`${getLineColor(station.line)} whitespace-nowrap shrink-0 text-white text-xs px-2 py-1 rounded-lg font-medium`}>
                         {station.line}
                     </span>

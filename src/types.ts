@@ -10,6 +10,7 @@ export interface StationNode {
 export interface StationResult {
     name: string;
     line: string;
+    transferCount: number;
 }
 
 // 검색 폼의 Props 타입
