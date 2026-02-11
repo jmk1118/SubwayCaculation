@@ -6,8 +6,11 @@ export const findStationsByDistance = (
     startStationName: string,
     targetDistance: number
 ): StationResult[] => {
-    const startNodeIds = stationIndex[startStationName];
-    if (!startNodeIds || startNodeIds.length === 0)
+    if (!graph || !stationIndex || !startStationName || targetDistance < 0)
+        return [];
+
+    const startNodeIds = (stationIndex[startStationName] ?? []).filter((id) => Boolean(graph[id]));
+    if (startNodeIds.length === 0)
         return [];
 
     const bestByNode: Record<string, { distance: number; transferCount: number }> = {};
@@ -22,12 +25,16 @@ export const findStationsByDistance = (
         const currentId = queue.shift()!;
         const currentState = bestByNode[currentId];
         const currentNode = graph[currentId];
+        if (!currentState || !currentNode)
+            continue;
 
         if (currentState.distance >= targetDistance)
             continue;
 
         for (const neighborId of currentNode.neighbors) {
             const neighborNode = graph[neighborId];
+            if (!neighborNode)
+                continue;
             const nextDistance = currentState.distance + 1;
             const nextTransferCount =
                 currentState.transferCount +
@@ -51,7 +58,10 @@ export const findStationsByDistance = (
 
     const minDistanceByName: Record<string, number> = {};
     Object.entries(bestByNode).forEach(([nodeId, info]) => {
-        const stationName = graph[nodeId].name;
+        const node = graph[nodeId];
+        if (!node)
+            return;
+        const stationName = node.name;
         if (minDistanceByName[stationName] === undefined || info.distance < minDistanceByName[stationName]) {
             minDistanceByName[stationName] = info.distance;
         }
@@ -60,6 +70,8 @@ export const findStationsByDistance = (
     const bestResultByName: Record<string, StationResult> = {};
     Object.entries(bestByNode).forEach(([nodeId, info]) => {
         const node = graph[nodeId];
+        if (!node)
+            return;
         const stationName = node.name;
 
         if (minDistanceByName[stationName] !== targetDistance || info.distance !== targetDistance)

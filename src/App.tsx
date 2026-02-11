@@ -96,6 +96,10 @@ const App: React.FC = () => {
                             stationIndex={stationIndex}
                             onSearch={(name, dist) => {
                                 const results = findStationsByDistance(graph, stationIndex, name, dist);
+                                if (results.length === 0) {
+                                    setSearchResults([]);
+                                    return;
+                                }
 
                                 const sortedResults = [...results].sort((a, b) => {
                                     if (a.transferCount !== b.transferCount) {

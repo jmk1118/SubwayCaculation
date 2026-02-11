@@ -74,8 +74,14 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                 .slice(0, 8);
             setSuggestions(filtered);
             setShowAutocomplete(true);
+
+            if (filtered.length === 0) {
+                onSearch("", distance);
+            }
         } else {
             setSuggestions([]);
+            setShowAutocomplete(false);
+            onSearch("", distance);
         }
     };
 
@@ -91,7 +97,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         if (resolvedName) {
             onSearch(resolvedName, distance);
             setShowAutocomplete(false);
+            return;
         }
+        onSearch("", distance);
+        setShowAutocomplete(false);
     };
 
     const updateDistance = (next: number) => {
@@ -101,7 +110,10 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         if (resolvedName && clamped > 0) {
             onSearch(resolvedName, clamped);
             setShowAutocomplete(false);
+            return;
         }
+        onSearch("", clamped);
+        setShowAutocomplete(false);
     };
 
     // 거리 증감 함수
