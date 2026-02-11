@@ -11,7 +11,7 @@ const Header = () => {
                 </div>
             </div>
 
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-3">
+            <h1 className="text-[clamp(1.5rem,7vw,1.875rem)] font-black text-slate-900 tracking-tight mb-3 whitespace-nowrap">
                 퇴근까지 <span className="text-blue-600">N정거장</span>
             </h1>
 
