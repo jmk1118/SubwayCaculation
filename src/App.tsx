@@ -98,6 +98,10 @@ const App: React.FC = () => {
                                 const results = findStationsByDistance(graph, stationIndex, name, dist);
 
                                 const sortedResults = [...results].sort((a, b) => {
+                                    if (a.transferCount !== b.transferCount) {
+                                        return a.transferCount - b.transferCount;
+                                    }
+
                                     const lineA = LINE_SORT_RANK[a.line] ?? Number.MAX_SAFE_INTEGER;
                                     const lineB = LINE_SORT_RANK[b.line] ?? Number.MAX_SAFE_INTEGER;
 
