@@ -16,6 +16,7 @@ const LINE_SORT_ORDER = [
     '7호선',
     '8호선',
     '9호선',
+    '인천1호선',
     '분당선'
 ] as const;
 
@@ -33,7 +34,7 @@ const App: React.FC = () => {
 
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {
-        const lines = ['line1', 'line2', 'line3', 'line4', 'line5', 'line6', 'line7', 'line8', 'line9', 'lineBunDang'];
+        const lines = ['line1', 'line2', 'line3', 'line4', 'line5', 'line6', 'line7', 'line8', 'line9', 'lineBunDang', 'lineIncheon1'];
 
         const loadData = async () => {
             try {

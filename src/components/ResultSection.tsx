@@ -13,6 +13,7 @@ const getLineColor = (line: string) => {
         case '7호선': return 'bg-lime-900';
         case '8호선': return 'bg-pink-500';
         case '9호선': return 'bg-yellow-600';
+        case '인천1호선': return 'bg-cyan-600';
         case '분당선': return 'bg-amber-500';
         default: return 'bg-gray-400';
     }
