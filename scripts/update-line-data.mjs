@@ -5,6 +5,32 @@ const DATA_DIR = path.join(process.cwd(), 'public', 'data');
 
 const REQUIRED_ENVS = ['SUBWAY_STATION_API_URL', 'SUBWAY_DISTANCE_API_URL'];
 
+const LINE_TO_FILE = {
+  '1호선': 'line1.json',
+  '2호선': 'line2.json',
+  '3호선': 'line3.json',
+  '4호선': 'line4.json',
+  '5호선': 'line5.json',
+  '6호선': 'line6.json',
+  '7호선': 'line7.json',
+  '8호선': 'line8.json',
+  '9호선': 'line9.json',
+  '분당선': 'lineBunDang.json'
+};
+
+const LINE_TO_SUFFIX = {
+  '1호선': '1',
+  '2호선': '2',
+  '3호선': '3',
+  '4호선': '4',
+  '5호선': '5',
+  '6호선': '6',
+  '7호선': '7',
+  '8호선': '8',
+  '9호선': '9',
+  '분당선': '분당'
+};
+
 const LINE_FIELD_CANDIDATES = [
   'line', 'line_nm', 'line_num', 'line_no', 'linecode', 'line_name',
   'sbwy_rout_ln_nm', 'route', 'route_nm', 'ln_cd',
@@ -38,16 +64,6 @@ const FROM_STATION_FIELD_CANDIDATES = [
 const TO_STATION_FIELD_CANDIDATES = [
   'to_station', 'to_stn', 'target_station', 'end_station',
   'tbg_station', 'to_statn_nm', '도착역'
-];
-
-const OPERATOR_FIELD_CANDIDATES = [
-  'operator', 'operator_nm', 'corp', 'corp_nm', 'railway_company', 'company',
-  '관리기관', '운영기관', '운영사', '철도운영기관'
-];
-
-const REGION_FIELD_CANDIDATES = [
-  'city', 'region', 'area', 'sido', 'sigungu', 'loc', 'location',
-  '지역', '권역', '시도'
 ];
 
 function assertRequiredEnv() {
@@ -91,58 +107,22 @@ function normalizeValue(value) {
   return String(value ?? '').trim();
 }
 
-function inferRegion(rawLine, operator, region) {
-  const joined = `${rawLine} ${operator} ${region}`.replace(/\s+/g, '');
-
-  if (/서울교통공사|서울메트로|서울시|서울/.test(joined)) return '서울';
-  if (/인천교통공사|인천/.test(joined)) return '인천';
-  if (/부산교통공사|부산/.test(joined)) return '부산';
-  if (/대구교통공사|대구/.test(joined)) return '대구';
-  if (/광주교통공사|광주/.test(joined)) return '광주';
-  if (/대전교통공사|대전/.test(joined)) return '대전';
-
-  return '';
-}
-
-function normalizeLineName(value, context = {}) {
+function normalizeLineName(value) {
   const raw = normalizeValue(value).replace(/\s+/g, '');
   if (!raw) return '';
 
   if (/수인분당|분당/.test(raw)) return '분당선';
-  if (/신분당/.test(raw)) return '신분당선';
-
-  if (/(경의중앙|경춘|수인분당|서해|신림|우이신설|김포골드|공항철도|의정부경전철|에버라인|용인경전철)/.test(raw)) {
-    return raw.replace(/수도권전철|도시철도|지하철/g, '');
-  }
 
   const numMatch = raw.match(/([1-9])호선/);
-  if (numMatch) {
-    const region = inferRegion(raw, context.operator ?? '', context.region ?? '');
-    if (region && region !== '서울') {
-      return `${region}${numMatch[1]}호선`;
-    }
-    return `${numMatch[1]}호선`;
-  }
+  if (numMatch) return `${numMatch[1]}호선`;
 
   const singleDigit = raw.match(/^([1-9])$/);
-  if (singleDigit) {
-    const region = inferRegion(raw, context.operator ?? '', context.region ?? '');
-    if (region && region !== '서울') {
-      return `${region}${singleDigit[1]}호선`;
-    }
-    return `${singleDigit[1]}호선`;
-  }
+  if (singleDigit) return `${singleDigit[1]}호선`;
 
   const lineMatch = raw.match(/^line([1-9])$/i);
-  if (lineMatch) {
-    const region = inferRegion(raw, context.operator ?? '', context.region ?? '');
-    if (region && region !== '서울') {
-      return `${region}${lineMatch[1]}호선`;
-    }
-    return `${lineMatch[1]}호선`;
-  }
+  if (lineMatch) return `${lineMatch[1]}호선`;
 
-  return raw;
+  return '';
 }
 
 function normalizeStationName(value) {
@@ -295,9 +275,7 @@ function pickValue(row, candidates) {
 function buildLineRecords(rows) {
   return rows
     .map((row) => {
-      const operator = pickValue(row, OPERATOR_FIELD_CANDIDATES);
-      const region = pickValue(row, REGION_FIELD_CANDIDATES);
-      const line = normalizeLineName(pickValue(row, LINE_FIELD_CANDIDATES), { operator, region });
+      const line = normalizeLineName(pickValue(row, LINE_FIELD_CANDIDATES));
       const station = normalizeStationName(pickValue(row, STATION_FIELD_CANDIDATES));
       const nextStation = normalizeStationName(pickValue(row, NEXT_STATION_FIELD_CANDIDATES));
       const order = toNumber(pickValue(row, ORDER_FIELD_CANDIDATES));
@@ -318,9 +296,7 @@ function buildDistanceRecords(rows, stationRecords) {
 
   const records = [];
   for (const row of rows) {
-    const operator = pickValue(row, OPERATOR_FIELD_CANDIDATES);
-    const region = pickValue(row, REGION_FIELD_CANDIDATES);
-    let line = normalizeLineName(pickValue(row, LINE_FIELD_CANDIDATES), { operator, region });
+    let line = normalizeLineName(pickValue(row, LINE_FIELD_CANDIDATES));
     let station = normalizeStationName(pickValue(row, STATION_FIELD_CANDIDATES));
     let nextStation = normalizeStationName(pickValue(row, NEXT_STATION_FIELD_CANDIDATES));
     const order = toNumber(pickValue(row, ORDER_FIELD_CANDIDATES));
@@ -481,44 +457,14 @@ function buildTransferIndex(existingGraph) {
   return index;
 }
 
-function toLineToken(line) {
-  const token = line.replace(/\s+/g, '').replace(/[^0-9A-Za-z가-힣]/g, '');
-  return token || 'unknown';
-}
-
-function getLineFileName(line) {
-  const seoulLine = line.match(/^([1-9])호선$/);
-  if (seoulLine) {
-    return `line${seoulLine[1]}.json`;
-  }
-
-  if (line === '분당선') {
-    return 'lineBunDang.json';
-  }
-
-  return `line_${toLineToken(line)}.json`;
-}
-
-function getLineSuffix(line) {
-  const seoulLine = line.match(/^([1-9])호선$/);
-  if (seoulLine) {
-    return seoulLine[1];
-  }
-
-  if (line === '분당선') {
-    return '분당';
-  }
-
-  return toLineToken(line);
-}
-
 function buildManagedLineData(lineStationMap, transferIndex) {
   const lineDataByFile = new Map();
   const idByLineStation = new Map();
 
   for (const [line, stations] of lineStationMap.entries()) {
-    const fileName = getLineFileName(line);
-    const suffix = getLineSuffix(line);
+    const fileName = LINE_TO_FILE[line];
+    const suffix = LINE_TO_SUFFIX[line];
+    if (!fileName || !suffix) continue;
 
     const data = {};
     stations.forEach((station, idx) => {
