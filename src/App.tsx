@@ -17,6 +17,7 @@ const LINE_SORT_ORDER = [
     '8호선',
     '9호선',
     '인천1호선',
+    '인천2호선',
     '분당선'
 ] as const;
 
