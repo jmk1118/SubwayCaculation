@@ -33,22 +33,37 @@ const LINE_TO_SUFFIX = {
 
 const LINE_FIELD_CANDIDATES = [
   'line', 'line_nm', 'line_num', 'line_no', 'linecode', 'line_name',
+  'sbwy_rout_ln_nm', 'route', 'route_nm', 'ln_cd',
   '호선', '호선명', '노선', '노선명'
 ];
 
 const STATION_FIELD_CANDIDATES = [
   'station', 'station_nm', 'station_name', 'stn_nm', 'statn_nm',
+  'from_station', 'from_stn', 'source_station', 'start_station',
+  'fr_station', 'fr_stn', 'stin_nm', 'sbwy_stns_nm',
   '역명', '전철역명', '지하철역명'
 ];
 
 const NEXT_STATION_FIELD_CANDIDATES = [
   'next_station', 'next_station_nm', 'next_station_name',
-  'dest_station', 'arrive_station', 'next_stn_nm', '도착역', '다음역'
+  'to_station', 'to_stn', 'target_station', 'end_station',
+  'dest_station', 'arrive_station', 'next_stn_nm', 'tbg_station',
+  'to_statn_nm', '도착역', '다음역'
 ];
 
 const ORDER_FIELD_CANDIDATES = [
   'station_order', 'ord', 'seq', 'idx', 'sort', 'rank',
   'acml_dist', 'acml_dstn', 'distance_sum', '누계거리', '순번', '역순번'
+];
+
+const FROM_STATION_FIELD_CANDIDATES = [
+  'from_station', 'from_stn', 'source_station', 'start_station',
+  'fr_station', 'fr_stn', 'fr_statn_nm', '출발역'
+];
+
+const TO_STATION_FIELD_CANDIDATES = [
+  'to_station', 'to_stn', 'target_station', 'end_station',
+  'tbg_station', 'to_statn_nm', '도착역'
 ];
 
 function assertRequiredEnv() {
@@ -61,6 +76,7 @@ function assertRequiredEnv() {
 function fillApiKey(url) {
   const apiKey = process.env.DATA_GO_API_KEY ?? '';
   return url
+    .replaceAll('(인증키)', apiKey)
     .replaceAll('{API_KEY}', apiKey)
     .replaceAll('${API_KEY}', apiKey)
     .replaceAll('__API_KEY__', apiKey);
@@ -267,6 +283,44 @@ function buildLineRecords(rows) {
       return { line, station, nextStation, order };
     })
     .filter((row) => row.line && row.station);
+}
+
+function buildDistanceRecords(rows, stationRecords) {
+  const lineByStation = new Map();
+  for (const record of stationRecords) {
+    if (!lineByStation.has(record.station)) {
+      lineByStation.set(record.station, new Set());
+    }
+    lineByStation.get(record.station).add(record.line);
+  }
+
+  const records = [];
+  for (const row of rows) {
+    let line = normalizeLineName(pickValue(row, LINE_FIELD_CANDIDATES));
+    let station = normalizeStationName(pickValue(row, STATION_FIELD_CANDIDATES));
+    let nextStation = normalizeStationName(pickValue(row, NEXT_STATION_FIELD_CANDIDATES));
+    const order = toNumber(pickValue(row, ORDER_FIELD_CANDIDATES));
+
+    if (!station && !nextStation) {
+      station = normalizeStationName(pickValue(row, FROM_STATION_FIELD_CANDIDATES));
+      nextStation = normalizeStationName(pickValue(row, TO_STATION_FIELD_CANDIDATES));
+    }
+
+    if (!line && station) {
+      const candidates = lineByStation.get(station);
+      if (candidates?.size === 1) {
+        line = [...candidates][0];
+      }
+    }
+
+    if (!line || !station) {
+      continue;
+    }
+
+    records.push({ line, station, nextStation, order });
+  }
+
+  return records;
 }
 
 function unique(values) {
@@ -479,17 +533,21 @@ async function run() {
   }
 
   const stationRecords = buildLineRecords(stationRows);
-  const distanceRecords = buildLineRecords(distanceRows);
+  const distanceRecords = buildDistanceRecords(distanceRows, stationRecords);
 
   if (stationRecords.length === 0) {
     throw new Error('Could not normalize station records. Check field names and API response format.');
   }
 
   if (distanceRecords.length === 0) {
-    throw new Error('Could not normalize distance records. Check field names and API response format.');
+    const sample = distanceRows[0] ? Object.keys(distanceRows[0]).join(', ') : 'no rows';
+    console.warn(`Distance normalization fallback: parsed 0 rows. Raw keys: ${sample}`);
   }
 
-  const lineStationMap = buildLineStationMap(stationRecords, distanceRecords);
+  const lineStationMap = buildLineStationMap(
+    stationRecords,
+    distanceRecords.length > 0 ? distanceRecords : stationRecords
+  );
   const existingGraph = await readExistingGraph();
   const transferIndex = buildTransferIndex(existingGraph);
   const lineDataByFile = buildManagedLineData(lineStationMap, transferIndex);
