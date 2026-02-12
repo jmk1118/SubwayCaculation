@@ -17,6 +17,7 @@ const getLineColor = (line: string) => {
         case '인천2호선': return 'bg-yellow-500';
         case '분당선': return 'bg-amber-500';
         case '신분당선': return 'bg-red-500';
+        case '경의중앙선': return 'bg-teal-600';
         default: return 'bg-gray-400';
     }
 };

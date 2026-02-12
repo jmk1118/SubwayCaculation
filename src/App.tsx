@@ -19,7 +19,8 @@ const LINE_SORT_ORDER = [
     '인천1호선',
     '인천2호선',
     '분당선',
-    '신분당선'
+    '신분당선',
+    '경의중앙선'
 ] as const;
 
 const LINE_SORT_RANK = LINE_SORT_ORDER.reduce<Record<string, number>>((acc, line, index) => {
@@ -36,7 +37,22 @@ const App: React.FC = () => {
 
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {
-        const lines = ['line1', 'line2', 'line3', 'line4', 'line5', 'line6', 'line7', 'line8', 'line9', 'lineBunDang', 'lineIncheon1'];
+        const lines = [
+            'line1',
+            'line2',
+            'line3',
+            'line4',
+            'line5',
+            'line6',
+            'line7',
+            'line8',
+            'line9',
+            'lineBunDang',
+            'lineShinBundang',
+            'lineGyeonguiJungang',
+            'lineIncheon1',
+            'lineIncheon2'
+        ];
 
         const loadData = async () => {
             try {
