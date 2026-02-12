@@ -18,7 +18,8 @@ const LINE_SORT_ORDER = [
     '9호선',
     '인천1호선',
     '인천2호선',
-    '분당선'
+    '분당선',
+    '신분당선'
 ] as const;
 
 const LINE_SORT_RANK = LINE_SORT_ORDER.reduce<Record<string, number>>((acc, line, index) => {
