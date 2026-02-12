@@ -48,19 +48,11 @@ function fileFor(line) {
 }
 
 function buildUrl(line, start, end) {
-  let url = ENDPOINT_TEMPLATE
+  return ENDPOINT_TEMPLATE
     .replaceAll('{API_KEY}', API_KEY)
+    .replaceAll('{LINE}', encodeURIComponent(line))
     .replaceAll('{START}', String(start))
     .replaceAll('{END}', String(end));
-
-  if (url.includes('{LINE}')) {
-    url = url.replaceAll('{LINE}', encodeURIComponent(line));
-  } else {
-    // 템플릿에 LINE 플레이스홀더가 없으면 마지막에 line 세그먼트를 붙여서 호출
-    url = `${url.replace(/\/+$/, '')}/${encodeURIComponent(line)}`;
-  }
-
-  return url;
 }
 
 function extractRows(payload) {
@@ -72,66 +64,25 @@ function extractRows(payload) {
   return [];
 }
 
-function extractApiMessage(payload) {
-  if (!payload || typeof payload !== 'object') return '';
-  const firstObj = Object.values(payload).find((v) => v && typeof v === 'object');
-  if (!firstObj || typeof firstObj !== 'object') return '';
-  const result = firstObj.RESULT;
-  if (result && typeof result === 'object') {
-    const code = result.CODE ?? '';
-    const message = result.MESSAGE ?? '';
-    return `${code} ${message}`.trim();
-  }
-  return '';
-}
-
-function getLineVariants(line) {
-  const n = line.match(/[1-9]/)?.[0];
-  if (!n) return [line];
-  return [line, n, n.padStart(2, '0'), `${n}호선`];
-}
-
 async function fetchLineRows(line) {
-  const candidates = getLineVariants(line);
-  let lastInfo = '';
-
-  for (const candidate of candidates) {
-    const all = [];
-    let start = 1;
-
-    while (true) {
-      const end = start + PAGE_SIZE - 1;
-      const url = buildUrl(candidate, start, end);
-      const res = await fetch(url, { headers: { Accept: 'application/json' } });
-      if (!res.ok) throw new Error(`Failed fetching ${line}: ${res.status}`);
-
-      let json;
-      try {
-        json = await res.json();
-      } catch {
-        throw new Error(`Failed parsing response as JSON for ${line}. Set endpoint type to /json/ (current template: ${ENDPOINT_TEMPLATE})`);
-      }
-      const rows = extractRows(json);
-      const info = extractApiMessage(json);
-      if (info) lastInfo = info;
-
-      if (rows.length === 0) break;
-
-      all.push(...rows);
-      if (rows.length < PAGE_SIZE) break;
-      start += PAGE_SIZE;
-    }
-
-    if (all.length > 0) {
-      return all;
-    }
-  }
-
-  if (lastInfo) {
-    throw new Error(`No rows fetched for ${line}. API message: ${lastInfo}`);
-  }
-
   const all = [];
+  let start = 1;
+
+  while (true) {
+    const end = start + PAGE_SIZE - 1;
+    const url = buildUrl(line, start, end);
+    const res = await fetch(url, { headers: { Accept: 'application/json' } });
+    if (!res.ok) throw new Error(`Failed fetching ${line}: ${res.status}`);
+
+    const json = await res.json();
+    const rows = extractRows(json);
+    if (rows.length === 0) break;
+
+    all.push(...rows);
+    if (rows.length < PAGE_SIZE) break;
+    start += PAGE_SIZE;
+  }
+
   return all;
 }
 
