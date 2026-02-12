@@ -1,0 +1,48 @@
+name: Update Seoul Subway Data
+
+on:
+  schedule:
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate line1-9 json
+        env:
+          SEOUL_OPEN_API_KEY: ${{ secrets.SEOUL_OPEN_API_KEY }}
+          SEOUL_LINE_ENDPOINT_TEMPLATE: ${{ secrets.SEOUL_LINE_ENDPOINT_TEMPLATE }}
+        run: npm run update:seoul-lines
+
+      - name: Validate graph
+        run: npm run validate:seoul-lines
+
+      - name: Build check
+        run: npm run build
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/line1.json public/data/line2.json public/data/line3.json public/data/line4.json public/data/line5.json public/data/line6.json public/data/line7.json public/data/line8.json public/data/line9.json
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "chore(data): refresh seoul subway line graph"
+          git push

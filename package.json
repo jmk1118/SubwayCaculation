@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "update:seoul-lines": "node scripts/update-seoul-lines.mjs",
+    "validate:seoul-lines": "node scripts/validate-seoul-lines.mjs"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
