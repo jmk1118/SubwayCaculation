@@ -9,7 +9,6 @@ const ENDPOINT_TEMPLATE =
   process.env.SEOUL_LINE_ENDPOINT_TEMPLATE ??
   'http://openapi.seoul.go.kr:8088/{API_KEY}/json/SearchSTNBySubwayLineInfo/{START}/{END}/{LINE}';
 const PAGE_SIZE = Number(process.env.SEOUL_LINE_PAGE_SIZE ?? 1000);
-const HAS_LINE_PLACEHOLDER = ENDPOINT_TEMPLATE.includes('{LINE}');
 
 const STATION_NAME_FIELDS = ['STATION_NM', 'STATN_NM', 'station_nm', 'stationName', '역명'];
 const LINE_NAME_FIELDS = ['LINE_NUM', 'LINE_NM', 'line_num', 'lineName', '호선'];
@@ -56,6 +55,9 @@ function buildUrl(line, start, end) {
 
   if (url.includes('{LINE}')) {
     url = url.replaceAll('{LINE}', encodeURIComponent(line));
+  } else {
+    // 템플릿에 LINE 플레이스홀더가 없으면 마지막에 line 세그먼트를 붙여서 호출
+    url = `${url.replace(/\/+$/, '')}/${encodeURIComponent(line)}`;
   }
 
   return url;
@@ -89,68 +91,36 @@ function getLineVariants(line) {
   return [line, n, n.padStart(2, '0'), `${n}호선`];
 }
 
-async function fetchRowsByPagination(line = '') {
-  const all = [];
-  let start = 1;
-  let lastInfo = '';
-
-  while (true) {
-    const end = start + PAGE_SIZE - 1;
-    const url = buildUrl(line, start, end);
-    const res = await fetch(url, { headers: { Accept: 'application/json' } });
-    if (!res.ok) throw new Error(`Failed fetching rows: ${res.status}`);
-
-    let json;
-    try {
-      json = await res.json();
-    } catch {
-      throw new Error(`Failed parsing response as JSON. Set endpoint type to /json/ (current template: ${ENDPOINT_TEMPLATE})`);
-    }
-
-    const rows = extractRows(json);
-    const info = extractApiMessage(json);
-    if (info) lastInfo = info;
-
-    if (rows.length === 0) break;
-    all.push(...rows);
-    if (rows.length < PAGE_SIZE) break;
-    start += PAGE_SIZE;
-  }
-
-  return { rows: all, info: lastInfo };
-}
-
-let cachedAllRowsPromise = null;
-async function fetchAllRowsOnce() {
-  if (!cachedAllRowsPromise) {
-    cachedAllRowsPromise = fetchRowsByPagination('');
-  }
-  return cachedAllRowsPromise;
-}
-
 async function fetchLineRows(line) {
-  if (!HAS_LINE_PLACEHOLDER) {
-    const { rows, info } = await fetchAllRowsOnce();
-    const filtered = rows.filter((row) => {
-      const lineRaw = readField(row, LINE_NAME_FIELDS);
-      const normalized = normalizeLineName(lineRaw);
-      return normalized === line;
-    });
-
-    if (filtered.length > 0) {
-      return filtered;
-    }
-
-    const sampleKeys = rows[0] ? Object.keys(rows[0]).join(', ') : 'no rows';
-    throw new Error(`No rows fetched for ${line}. API message: ${info || 'none'}. Raw keys: ${sampleKeys}`);
-  }
-
   const candidates = getLineVariants(line);
   let lastInfo = '';
 
   for (const candidate of candidates) {
-    const { rows: all, info } = await fetchRowsByPagination(candidate);
-    if (info) lastInfo = info;
+    const all = [];
+    let start = 1;
+
+    while (true) {
+      const end = start + PAGE_SIZE - 1;
+      const url = buildUrl(candidate, start, end);
+      const res = await fetch(url, { headers: { Accept: 'application/json' } });
+      if (!res.ok) throw new Error(`Failed fetching ${line}: ${res.status}`);
+
+      let json;
+      try {
+        json = await res.json();
+      } catch {
+        throw new Error(`Failed parsing response as JSON for ${line}. Set endpoint type to /json/ (current template: ${ENDPOINT_TEMPLATE})`);
+      }
+      const rows = extractRows(json);
+      const info = extractApiMessage(json);
+      if (info) lastInfo = info;
+
+      if (rows.length === 0) break;
+
+      all.push(...rows);
+      if (rows.length < PAGE_SIZE) break;
+      start += PAGE_SIZE;
+    }
 
     if (all.length > 0) {
       return all;
