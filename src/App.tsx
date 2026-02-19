@@ -57,7 +57,8 @@ const App: React.FC = () => {
             'lineAirportRailroad',
             'lineGyeongchun',
             'lineUijeongbuLrt',
-            'lineYonginLrt'
+            'lineYonginLrt',
+            'lineGyeonggang'
         ];
 
         const loadData = async () => {
