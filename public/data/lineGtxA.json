@@ -1,0 +1,92 @@
+{
+    "운정중앙_GTXA": {
+        "id": "운정중앙_GTXA",
+        "name": "운정중앙",
+        "line": "GTX-A",
+        "neighbors": [
+            "킨텍스_GTXA"
+        ]
+    },
+    "킨텍스_GTXA": {
+        "id": "킨텍스_GTXA",
+        "name": "킨텍스",
+        "line": "GTX-A",
+        "neighbors": [
+            "운정중앙_GTXA",
+            "대곡_GTXA"
+        ]
+    },
+    "대곡_GTXA": {
+        "id": "대곡_GTXA",
+        "name": "대곡",
+        "line": "GTX-A",
+        "neighbors": [
+            "킨텍스_GTXA",
+            "연신내_GTXA",
+            "대곡_3",
+            "대곡_경의중앙",
+            "대곡_서해"
+        ]
+    },
+    "연신내_GTXA": {
+        "id": "연신내_GTXA",
+        "name": "연신내",
+        "line": "GTX-A",
+        "neighbors": [
+            "대곡_GTXA",
+            "서울역_GTXA",
+            "연신내_3",
+            "연신내_6"
+        ]
+    },
+    "서울역_GTXA": {
+        "id": "서울역_GTXA",
+        "name": "서울역",
+        "line": "GTX-A",
+        "neighbors": [
+            "연신내_GTXA",
+            "서울역_1",
+            "서울역_4",
+            "서울역_공항철도",
+            "서울역_경의중앙"
+        ]
+    },
+    "수서_GTXA": {
+        "id": "수서_GTXA",
+        "name": "수서",
+        "line": "GTX-A",
+        "neighbors": [
+            "성남_GTXA",
+            "수서_3",
+            "수서_분당"
+        ]
+    },
+    "성남_GTXA": {
+        "id": "성남_GTXA",
+        "name": "성남",
+        "line": "GTX-A",
+        "neighbors": [
+            "수서_GTXA",
+            "구성_GTXA",
+            "성남_경강"
+        ]
+    },
+    "구성_GTXA": {
+        "id": "구성_GTXA",
+        "name": "구성",
+        "line": "GTX-A",
+        "neighbors": [
+            "성남_GTXA",
+            "동탄_GTXA",
+            "구성_분당"
+        ]
+    },
+    "동탄_GTXA": {
+        "id": "동탄_GTXA",
+        "name": "동탄",
+        "line": "GTX-A",
+        "neighbors": [
+            "구성_GTXA"
+        ]
+    }
+}
