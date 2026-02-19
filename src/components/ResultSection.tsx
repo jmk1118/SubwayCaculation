@@ -20,6 +20,7 @@ const getLineColor = (line: string) => {
         case '경의중앙선': return 'bg-teal-600';
         case '공항철도': return 'bg-blue-500';
         case '경춘선': return 'bg-emerald-500';
+        case '의정부경전철': return 'bg-lime-500';
         default: return 'bg-gray-400';
     }
 };
