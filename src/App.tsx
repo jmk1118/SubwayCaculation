@@ -58,7 +58,8 @@ const App: React.FC = () => {
             'lineGyeongchun',
             'lineUijeongbuLrt',
             'lineYonginLrt',
-            'lineGyeonggang'
+            'lineGyeonggang',
+            'lineUiSinseol'
         ];
 
         const loadData = async () => {

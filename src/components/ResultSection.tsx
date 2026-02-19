@@ -23,6 +23,7 @@ const getLineColor = (line: string) => {
         case '의정부경전철': return 'bg-lime-500';
         case '용인경전철': return 'bg-lime-700';
         case '경강선': return 'bg-indigo-500';
+        case '우이신설선': return 'bg-orange-400';
         default: return 'bg-gray-400';
     }
 };
