@@ -26,6 +26,7 @@ const getLineColor = (line: string) => {
         case '우이신설선': return 'bg-orange-400';
         case '서해선': return 'bg-emerald-700';
         case '김포도시철도': return 'bg-amber-700';
+        case '신림선': return 'bg-green-700';
         default: return 'bg-gray-400';
     }
 };

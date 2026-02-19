@@ -28,7 +28,8 @@ const LINE_SORT_ORDER = [
     '경강선',
     '우이신설선',
     '서해선',
-    '김포도시철도'
+    '김포도시철도',
+    '신림선'
 ] as const;
 
 const LINE_SORT_RANK = LINE_SORT_ORDER.reduce<Record<string, number>>((acc, line, index) => {
@@ -67,7 +68,8 @@ const App: React.FC = () => {
             'lineGyeonggang',
             'lineUiSinseol',
             'lineSeohae',
-            'lineGimpoGoldline'
+            'lineGimpoGoldline',
+            'lineSillim'
         ];
 
         const loadData = async () => {
