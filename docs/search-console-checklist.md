@@ -60,7 +60,7 @@ Vercel 사용 시:
   - 검색 성능(노출/클릭/CTR)
 
 ## 8) 유입 분석(선택)
-- `VITE_GA_MEASUREMENT_ID`를 배포 환경변수에 설정하면 GA4가 활성화됩니다.
+- `index.html`에 GA4 Google tag(`G-36DK902CHB`)가 포함되어 있습니다.
 - 앱에서 `search` 이벤트를 전송합니다.
   - `search_term`
   - `distance`

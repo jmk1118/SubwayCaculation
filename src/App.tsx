@@ -4,7 +4,7 @@ import SearchForm from './components/SearchForm';
 import ResultSection from './components/ResultSection';
 import { type StationIndexMap, type SubwayGraph, type StationResult } from './types';
 import { findStationsByDistance } from './utils/BFS';
-import { initAnalytics, trackSearch } from './utils/analytics';
+import { trackSearch } from './utils/analytics';
 
 // 결과창 호선 정렬 우선순위 설정 (앞에 있을수록 먼저 노출)
 const LINE_SORT_ORDER = [
@@ -61,10 +61,6 @@ const App: React.FC = () => {
         meta.name = 'google-site-verification';
         meta.content = token;
         document.head.appendChild(meta);
-    }, []);
-
-    useEffect(() => {
-        initAnalytics();
     }, []);
 
     // 1. 컴포넌트 마운트 시 데이터 로드
