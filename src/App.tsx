@@ -62,6 +62,41 @@ const App: React.FC = () => {
         document.head.appendChild(meta);
     }, []);
 
+    useEffect(() => {
+        const envSiteUrl = import.meta.env.VITE_SITE_URL?.trim().replace(/\/+$/, '');
+        const siteUrl = envSiteUrl || window.location.origin;
+        const pageUrl = `${siteUrl}/`;
+
+        const canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]') ?? document.createElement('link');
+        canonical.rel = 'canonical';
+        canonical.href = pageUrl;
+        if (!canonical.parentElement)
+            document.head.appendChild(canonical);
+
+        const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]') ?? document.createElement('meta');
+        ogUrl.setAttribute('property', 'og:url');
+        ogUrl.content = pageUrl;
+        if (!ogUrl.parentElement)
+            document.head.appendChild(ogUrl);
+
+        const existingLd = document.getElementById('website-ldjson');
+        if (existingLd)
+            existingLd.remove();
+
+        const ldJson = document.createElement('script');
+        ldJson.type = 'application/ld+json';
+        ldJson.id = 'website-ldjson';
+        ldJson.text = JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: '퇴근까지 N정거장',
+            url: pageUrl,
+            inLanguage: 'ko-KR',
+            description: '출발역과 정거장 수를 입력하면 도달 가능한 역을 빠르게 찾아주는 수도권 지하철 거리 탐색 서비스'
+        });
+        document.head.appendChild(ldJson);
+    }, []);
+
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {
         const lines = [

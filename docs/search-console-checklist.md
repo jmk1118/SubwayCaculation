@@ -24,6 +24,7 @@ Vercel 사용 시:
 - `/robots.txt`
 - `/sitemap.xml`
 - `<head>`에 `google-site-verification` 메타태그가 삽입되었는지 확인
+- `<head>`에 `canonical`, `og:url`, `application/ld+json`이 삽입되었는지 확인
 
 ## 3) Search Console 등록
 1. [Google Search Console](https://search.google.com/search-console) 접속
