@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://subwaycaculation.vercel.app/
+Sitemap: https://subwaycaculation.vercel.app/sitemap.xml
