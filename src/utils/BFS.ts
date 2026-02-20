@@ -14,15 +14,15 @@ export const findStationsByDistance = (
         return [];
 
     const bestByNode: Record<string, { distance: number; transferCount: number }> = {};
-    const queue: string[] = [];
+    const deque: string[] = [];
 
     startNodeIds.forEach((id) => {
         bestByNode[id] = { distance: 0, transferCount: 0 };
-        queue.push(id);
+        deque.push(id);
     });
 
-    while (queue.length > 0) {
-        const currentId = queue.shift()!;
+    while (deque.length > 0) {
+        const currentId = deque.shift()!;
         const currentState = bestByNode[currentId];
         const currentNode = graph[currentId];
         if (!currentState || !currentNode)
@@ -35,10 +35,13 @@ export const findStationsByDistance = (
             const neighborNode = graph[neighborId];
             if (!neighborNode)
                 continue;
-            const nextDistance = currentState.distance + 1;
+
+            const isTransfer = currentNode.name === neighborNode.name && currentNode.line !== neighborNode.line;
+            const stepDistance = isTransfer ? 0 : 1;
+            const nextDistance = currentState.distance + stepDistance;
             const nextTransferCount =
                 currentState.transferCount +
-                (currentNode.line !== neighborNode.line ? 1 : 0);
+                (isTransfer ? 1 : 0);
 
             const prevState = bestByNode[neighborId];
             const shouldUpdate =
@@ -51,7 +54,11 @@ export const findStationsByDistance = (
                     distance: nextDistance,
                     transferCount: nextTransferCount
                 };
-                queue.push(neighborId);
+                if (stepDistance === 0) {
+                    deque.unshift(neighborId);
+                } else {
+                    deque.push(neighborId);
+                }
             }
         }
     }

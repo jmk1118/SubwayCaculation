@@ -213,7 +213,7 @@ const App: React.FC = () => {
                         <ul className="text-sm text-slate-700 space-y-2 leading-relaxed text-center list-none p-0">
                             <li>퇴근까지 N정거장은 출발역과 정거장 수를 기준으로<br />도달 가능한 역을 빠르게 찾는 수도권 지하철 탐색 도구입니다.</li>
                             <li>출발역과 원하는 이동 거리를 입력해주세요.</li>
-                            <li>환승하는 경우 이동 거리 1로 계산됩니다.</li>
+                            <li>환승은 이동 거리(정거장 수)에 포함되지 않습니다.</li>
                             <li>역명은 띄어쓰기 없이 입력해도 탐색됩니다.</li>
                             <li>"OO역" 형태로 입력해도 인식합니다.</li>
                         </ul>
