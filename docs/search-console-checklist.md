@@ -59,7 +59,6 @@ Vercel 사용 시:
   - 색인된 페이지 수
   - 크롤링 오류
   - 검색 성능(노출/클릭/CTR)
-  - 소셜 미리보기(OG/Twitter 이미지) 표시 여부
 
 ## 8) 유입 분석(선택)
 - `index.html`에 GA4 Google tag(`G-36DK902CHB`)가 포함되어 있습니다.
