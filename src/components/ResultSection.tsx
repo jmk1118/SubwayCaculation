@@ -32,13 +32,43 @@ const getLineColor = (line: string) => {
     }
 };
 
-const ResultSection: React.FC<{ stations: StationResult[] }> = ({ stations }) => {
+interface ResultSectionProps {
+    stations: StationResult[];
+    startStationName: string;
+}
+
+const ensureStationSuffix = (name: string) => name.endsWith('역') ? name : `${name}역`;
+const toTransitStationQuery = (name: string) => `${ensureStationSuffix(name)} 지하철역`;
+
+const createGoogleMapDirectionsUrl = (startStationName: string, endStationName: string) => {
+    const start = toTransitStationQuery(startStationName.trim());
+    const end = toTransitStationQuery(endStationName.trim());
+    const params = new URLSearchParams({
+        api: '1',
+        origin: start,
+        destination: end,
+        travelmode: 'transit'
+    });
+    return `https://www.google.com/maps/dir/?${params.toString()}`;
+};
+
+const ResultSection: React.FC<ResultSectionProps> = ({ stations, startStationName }) => {
+    const canOpenMap = startStationName.trim().length > 0;
+
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {stations.map((station, index) => (
-                <div
+                <button
                     key={index}
-                    className="flex items-center justify-between gap-2 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-transform active:scale-95"
+                    type="button"
+                    onClick={() => {
+                        if (!canOpenMap)
+                            return;
+                        const url = createGoogleMapDirectionsUrl(startStationName, station.name);
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                    }}
+                    disabled={!canOpenMap}
+                    className="flex items-center justify-between gap-2 p-4 bg-white rounded-2xl shadow-sm border border-gray-100 transition-transform active:scale-95 text-left disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                     <div className="min-w-0 flex-1">
                         <p className="font-bold text-gray-800 truncate">{station.name}</p>
@@ -49,7 +79,7 @@ const ResultSection: React.FC<{ stations: StationResult[] }> = ({ stations }) =>
                     <span className={`${getLineColor(station.line)} whitespace-nowrap shrink-0 text-white text-xs px-2 py-1 rounded-lg font-medium`}>
                         {station.line}
                     </span>
-                </div>
+                </button>
             ))}
         </div>
     );

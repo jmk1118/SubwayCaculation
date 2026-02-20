@@ -42,6 +42,7 @@ const LINE_SORT_RANK = LINE_SORT_ORDER.reduce<Record<string, number>>((acc, line
 const App: React.FC = () => {
     const [graph, setGraph] = useState<SubwayGraph | null>(null);
     const [searchResults, setSearchResults] = useState<StationResult[]>([]);
+    const [startStationName, setStartStationName] = useState<string>('');
     const [stationIndex, setStationIndex] = useState<StationIndexMap>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
@@ -152,6 +153,7 @@ const App: React.FC = () => {
                         <SearchForm
                             stationIndex={stationIndex}
                             onSearch={(name, dist) => {
+                                setStartStationName(name);
                                 const results = findStationsByDistance(graph, stationIndex, name, dist);
                                 trackSearch(name, dist, results.length);
                                 if (results.length === 0) {
@@ -177,7 +179,7 @@ const App: React.FC = () => {
                                 setSearchResults(sortedResults);
                             }}
                         />
-                        <ResultSection stations={searchResults} />
+                        <ResultSection stations={searchResults} startStationName={startStationName} />
                     </>
                 ) : (
                     <div className="text-center py-20">데이터를 불러오는 중...</div>
