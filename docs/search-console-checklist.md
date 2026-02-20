@@ -26,6 +26,10 @@ Vercel 사용 시:
 - `<head>`에 `google-site-verification` 메타태그가 삽입되었는지 확인
 - `<head>`에 `canonical`, `og:url`, `application/ld+json`이 삽입되었는지 확인
 
+주의:
+- 현재 `canonical`, `og:url`, JSON-LD의 URL은 `/index.html`에 고정 도메인으로 설정되어 있습니다.
+- 배포 도메인이 바뀌면 `/index.html`의 URL도 같이 변경하세요.
+
 ## 3) Search Console 등록
 1. [Google Search Console](https://search.google.com/search-console) 접속
 2. 속성 추가
