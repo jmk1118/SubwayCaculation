@@ -45,6 +45,23 @@ const App: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
 
+    useEffect(() => {
+        const token = import.meta.env.VITE_SEARCH_CONSOLE_VERIFICATION?.trim();
+        if (!token)
+            return;
+
+        const existingMeta = document.querySelector<HTMLMetaElement>('meta[name="google-site-verification"]');
+        if (existingMeta) {
+            existingMeta.content = token;
+            return;
+        }
+
+        const meta = document.createElement('meta');
+        meta.name = 'google-site-verification';
+        meta.content = token;
+        document.head.appendChild(meta);
+    }, []);
+
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {
         const lines = [
