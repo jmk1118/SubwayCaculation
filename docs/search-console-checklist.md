@@ -53,12 +53,14 @@ Vercel 사용 시:
 - URL 검사에서 `/` 검사 후 색인 요청
 - Coverage/Pages 리포트에서 제외 사유 확인
 - [Rich Results Test](https://search.google.com/test/rich-results)로 FAQ 구조화 데이터 인식 확인
+- 페이지 소스에서 `WebApplication` JSON-LD 인식 확인
 
 ## 7) 운영 체크
 - 주 1회
   - 색인된 페이지 수
   - 크롤링 오류
   - 검색 성능(노출/클릭/CTR)
+  - 주요 메타(`title`, `canonical`, `og:title`) 변경 반영 여부
 
 ## 8) 유입 분석(선택)
 - `index.html`에 GA4 Google tag(`G-36DK902CHB`)가 포함되어 있습니다.
