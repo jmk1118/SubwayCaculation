@@ -187,7 +187,7 @@ const App: React.FC = () => {
 
                 {/* 푸터 (선택 사항) */}
                 <footer className="text-center text-gray-400 text-xs pt-4">
-                    © 2026 Subway Finder Project
+                    © 2026 Subway Caculation Project
                 </footer>
             </main>
 
