@@ -15,6 +15,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const [isEditingDistance, setIsEditingDistance] = useState(false);
     const [isEditingTransferWeight, setIsEditingTransferWeight] = useState(false);
+    const [showScoreTooltip, setShowScoreTooltip] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -231,11 +232,33 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                     </div>
                 </div>
 
-                {/* 2. 거리 조절부 (개선된 증감 버튼 UI) */}
+                {/* 2. 거리 점수 조절부 */}
                 <div className="w-full">
-                    <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
-                        이동 거리 (정거장 수)
-                    </label>
+                    <div className="flex items-center gap-2 mb-1 ml-1">
+                        <label className="block text-sm font-medium text-gray-500">
+                            거리 점수
+                        </label>
+                        <div className="relative">
+                            <button
+                                type="button"
+                                aria-label="거리 점수 도움말"
+                                aria-expanded={showScoreTooltip}
+                                onClick={() => setShowScoreTooltip((prev) => !prev)}
+                                className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold leading-none flex items-center justify-center"
+                            >
+                                ?
+                            </button>
+                            {showScoreTooltip && (
+                                <div
+                                    role="tooltip"
+                                    className="absolute z-20 mt-2 left-0 w-72 rounded-lg border border-gray-200 bg-white p-3 text-xs text-gray-700 shadow-lg"
+                                >
+                                    거리 점수는 정거장 수 + (환승 횟수 x 환승 가중치)입니다.<br />
+                                    환승 가중치가 높을수록 버스 등의 다른 루트가 검색될 가능성이 높으니 참고 부탁드립니다.
+                                </div>
+                            )}
+                        </div>
+                    </div>
                     <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-200">
 
                         <button
@@ -270,7 +293,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                                     <span className="text-2xl font-black text-blue-600">
                                         {distance}
                                     </span>
-                                    <span className="text-sm text-gray-400 ml-1 font-medium">역</span>
+                                    <span className="text-sm text-gray-400 ml-1 font-medium">점</span>
                                 </div>
                             )}
                         </div>

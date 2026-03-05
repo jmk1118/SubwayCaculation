@@ -80,10 +80,10 @@ export const findStationsByDistance = (
     graph: SubwayGraph,
     stationIndex: StationIndexMap,
     startStationName: string,
-    targetDistance: number,
+    targetScore: number,
     transferWeight: number = 2
 ): StationResult[] => {
-    if (!graph || !stationIndex || !startStationName || targetDistance < 0)
+    if (!graph || !stationIndex || !startStationName || targetScore < 0)
         return [];
 
     const startNodeIds = (stationIndex[startStationName] ?? []).filter((id) => Boolean(graph[id]));
@@ -180,13 +180,15 @@ export const findStationsByDistance = (
             bestResultByName[stationName] = {
                 name: stationName,
                 line: node.line,
-                transferCount: info.transferCount
+                transferCount: info.transferCount,
+                distance: info.distance,
+                score: info.weightedCost
             };
         }
     });
 
     return Object.values(bestResultByName).filter((result) => {
         const meta = bestMetaByName[result.name];
-        return Boolean(meta && meta.distance === targetDistance);
+        return Boolean(meta && meta.weightedCost === targetScore);
     });
 };
