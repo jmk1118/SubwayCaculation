@@ -152,9 +152,9 @@ const App: React.FC = () => {
                     <>
                         <SearchForm
                             stationIndex={stationIndex}
-                            onSearch={(name, dist) => {
+                            onSearch={(name, dist, transferWeight) => {
                                 setStartStationName(name);
-                                const results = findStationsByDistance(graph, stationIndex, name, dist);
+                                const results = findStationsByDistance(graph, stationIndex, name, dist, transferWeight);
                                 trackSearch(name, dist, results.length);
                                 if (results.length === 0) {
                                     setSearchResults([]);

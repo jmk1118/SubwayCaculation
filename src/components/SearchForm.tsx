@@ -4,15 +4,17 @@ import Autocomplete from './Autocomplete';
 
 interface SearchFormProps {
     stationIndex: StationIndexMap;
-    onSearch: (name: string, dist: number) => void;
+    onSearch: (name: string, dist: number, transferWeight: number) => void;
 }
 
 const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [distance, setDistance] = useState(1);
+    const [transferWeight, setTransferWeight] = useState(2);
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [showAutocomplete, setShowAutocomplete] = useState(false);
-    const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태 추가
+    const [isEditingDistance, setIsEditingDistance] = useState(false);
+    const [isEditingTransferWeight, setIsEditingTransferWeight] = useState(false);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -76,18 +78,18 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
             setShowAutocomplete(true);
 
             if (filtered.length === 0) {
-                onSearch("", distance);
+                onSearch("", distance, transferWeight);
             }
         } else {
             setSuggestions([]);
             setShowAutocomplete(false);
-            onSearch("", distance);
+            onSearch("", distance, transferWeight);
         }
     };
 
     const handleSelect = (name: string) => {
         setSearchTerm(name);
-        onSearch(name, distance);
+        onSearch(name, distance, transferWeight);
         setShowAutocomplete(false);
     };
 
@@ -95,11 +97,11 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         e.preventDefault();
         const resolvedName = resolveStationName(searchTerm);
         if (resolvedName) {
-            onSearch(resolvedName, distance);
+            onSearch(resolvedName, distance, transferWeight);
             setShowAutocomplete(false);
             return;
         }
-        onSearch("", distance);
+        onSearch("", distance, transferWeight);
         setShowAutocomplete(false);
     };
 
@@ -108,11 +110,11 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         setDistance(clamped);
         const resolvedName = resolveStationName(searchTerm);
         if (resolvedName && clamped > 0) {
-            onSearch(resolvedName, clamped);
+            onSearch(resolvedName, clamped, transferWeight);
             setShowAutocomplete(false);
             return;
         }
-        onSearch("", clamped);
+        onSearch("", clamped, transferWeight);
         setShowAutocomplete(false);
     };
 
@@ -129,6 +131,31 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
             setDistance(0); // 빈 칸일 경우 기본값
         }
     };
+
+    const updateTransferWeight = (next: number) => {
+        const clamped = next > 5 ? 5 : next < 1 ? 1 : next;
+        setTransferWeight(clamped);
+        const resolvedName = resolveStationName(searchTerm);
+        if (resolvedName && distance > 0) {
+            onSearch(resolvedName, distance, clamped);
+            setShowAutocomplete(false);
+            return;
+        }
+        onSearch("", distance, clamped);
+        setShowAutocomplete(false);
+    };
+
+    const handleTransferWeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const val = parseInt(e.target.value, 10);
+        if (!isNaN(val)) {
+            updateTransferWeight(val);
+        } else if (e.target.value === "") {
+            setTransferWeight(0);
+        }
+    };
+
+    const handleTransferWeightDecrement = () => updateTransferWeight(transferWeight - 1);
+    const handleTransferWeightIncrement = () => updateTransferWeight(transferWeight + 1);
 
     return (
         <form onSubmit={handleSubmit} className="mb-8">
@@ -150,6 +177,60 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                     <Autocomplete suggestions={suggestions} onSelect={handleSelect} visible={showAutocomplete} />
                 </div>
 
+                <div className="w-full">
+                    <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
+                        환승 가중치 (1~5)
+                    </label>
+                    <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-200">
+                        <button
+                            type="button"
+                            onClick={handleTransferWeightDecrement}
+                            className="w-14 h-14 flex items-center justify-center bg-white text-gray-600 rounded-xl shadow-sm active:scale-90 transition-all"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                            </svg>
+                        </button>
+
+                        <div className="flex-1 flex justify-center items-center">
+                            {isEditingTransferWeight ? (
+                                <input
+                                    type="number"
+                                    min={1}
+                                    max={5}
+                                    autoFocus
+                                    value={transferWeight}
+                                    onChange={handleTransferWeightChange}
+                                    onBlur={() => setIsEditingTransferWeight(false)}
+                                    onKeyDown={(e) => e.key === 'Enter' && setIsEditingTransferWeight(false)}
+                                    className="w-16 text-2xl font-black text-center bg-transparent text-blue-600 outline-none appearance-none"
+                                    style={{ MozAppearance: 'textfield' }}
+                                />
+                            ) : (
+                                <div
+                                    onClick={() => setIsEditingTransferWeight(true)}
+                                    className="cursor-pointer py-2 px-4 hover:bg-gray-100 rounded-lg transition-colors"
+                                >
+                                    <span className="text-2xl font-black text-blue-600">
+                                        {transferWeight}
+                                    </span>
+                                    <span className="text-sm text-gray-400 ml-1 font-medium">배</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <button
+                            type="button"
+                            onClick={handleTransferWeightIncrement}
+                            className="w-14 h-14 flex items-center justify-center bg-white text-gray-600 rounded-xl shadow-sm active:scale-90 transition-all"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
                 {/* 2. 거리 조절부 (개선된 증감 버튼 UI) */}
                 <div className="w-full">
                     <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
@@ -169,21 +250,21 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
                         {/* 중앙 숫자 표시 및 입력부 */}
                         <div className="flex-1 flex justify-center items-center">
-                            {isEditing ? (
+                            {isEditingDistance ? (
                                 <input
                                     type="number"
                                     autoFocus
                                     value={distance}
                                     onChange={handleDistanceChange}
-                                    onBlur={() => setIsEditing(false)}
-                                    onKeyDown={(e) => e.key === 'Enter' && setIsEditing(false)}
+                                    onBlur={() => setIsEditingDistance(false)}
+                                    onKeyDown={(e) => e.key === 'Enter' && setIsEditingDistance(false)}
                                     // appearance-none을 추가하여 브라우저 기본 스타일을 한 번 더 방어합니다.
                                     className="w-16 text-2xl font-black text-center bg-transparent text-blue-600 outline-none appearance-none"
                                     style={{ MozAppearance: 'textfield' }} // Firefox 호환성
                                 />
                             ) : (
                                 <div
-                                    onClick={() => setIsEditing(true)}
+                                    onClick={() => setIsEditingDistance(true)}
                                     className="cursor-pointer py-2 px-4 hover:bg-gray-100 rounded-lg transition-colors"
                                 >
                                     <span className="text-2xl font-black text-blue-600">

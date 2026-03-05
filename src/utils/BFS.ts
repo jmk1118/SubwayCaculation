@@ -80,7 +80,8 @@ export const findStationsByDistance = (
     graph: SubwayGraph,
     stationIndex: StationIndexMap,
     startStationName: string,
-    targetDistance: number
+    targetDistance: number,
+    transferWeight: number = 2
 ): StationResult[] => {
     if (!graph || !stationIndex || !startStationName || targetDistance < 0)
         return [];
@@ -127,7 +128,7 @@ export const findStationsByDistance = (
             const stepDistance = isTransfer ? 0 : 1; // 사용자 표시 거리(정거장 수)
             const nextDistance = current.distance + stepDistance;
 
-            const nextWeightedCost = current.weightedCost + (isTransfer ? 2 : 1); // 탐색 전용 가중치
+            const nextWeightedCost = current.weightedCost + (isTransfer ? transferWeight : 1); // 탐색 전용 가중치
             const nextTransferCount =
                 current.transferCount +
                 (isTransfer ? 1 : 0);
