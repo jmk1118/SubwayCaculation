@@ -16,11 +16,9 @@ const Header = () => {
             </h1>
 
             <p className="text-slate-500 text-sm md:text-base font-medium leading-relaxed max-w-xs mx-auto">
-                직장 30분 거리 역은 어디일까? <br />
+                직장에서 5정거장 떨어진 역은 어디일까? <br />
                 <span className="text-slate-800">정거장 수로 찾는 최적의 거주지 탐색기</span>
             </p>
-
-
         </header>
     );
 };
