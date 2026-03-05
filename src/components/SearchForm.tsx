@@ -156,7 +156,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
     };
 
     const updateTransferWeight = (next: number) => {
-        const clamped = next > 5 ? 5 : next < 1 ? 1 : next;
+        const clamped = next > 10 ? 10 : next < 1 ? 1 : next;
         setTransferWeight(clamped);
         const resolvedName = resolveStationName(searchTerm);
         if (resolvedName && distance > 0) {
@@ -202,7 +202,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
 
                 <div className="w-full">
                     <label className="block text-sm font-medium text-gray-500 mb-1 ml-1">
-                        환승 가중치 (1~5)
+                        환승 가중치 (1~10)
                     </label>
                     <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-2xl border border-gray-200">
                         <button
@@ -220,7 +220,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                                 <input
                                     type="number"
                                     min={1}
-                                    max={5}
+                                    max={10}
                                     autoFocus
                                     value={transferWeight}
                                     onChange={handleTransferWeightChange}
@@ -237,7 +237,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                                     <span className="text-2xl font-black text-blue-600">
                                         {transferWeight}
                                     </span>
-                                    <span className="text-sm text-gray-400 ml-1 font-medium">배</span>
+                                    <span className="text-sm text-gray-400 ml-1 font-medium">점</span>
                                 </div>
                             )}
                         </div>
