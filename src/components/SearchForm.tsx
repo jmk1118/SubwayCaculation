@@ -265,6 +265,8 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                                 type="button"
                                 aria-label="거리 점수 도움말"
                                 aria-expanded={showScoreTooltip}
+                                onMouseDown={(e) => e.stopPropagation()}
+                                onTouchStart={(e) => e.stopPropagation()}
                                 onClick={() => setShowScoreTooltip((prev) => !prev)}
                                 className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-bold leading-none flex items-center justify-center"
                             >
@@ -273,7 +275,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
                             {showScoreTooltip && (
                                 <div
                                     role="tooltip"
-                                    className="absolute z-20 mt-2 left-0 w-72 rounded-lg border border-gray-200 bg-white p-3 text-xs text-gray-700 shadow-lg"
+                                    className="absolute z-20 mt-2 left-0 w-75 rounded-lg border border-gray-200 bg-white p-3 text-xs text-gray-700 shadow-lg"
                                 >
                                     거리 점수는 정거장 수 + (환승 횟수 x 환승 가중치)입니다.<br />
                                     환승 가중치가 높을수록 버스 등의 다른 루트가 검색될 가능성이 높으니 참고 부탁드립니다.
