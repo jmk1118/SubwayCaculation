@@ -63,6 +63,28 @@ const SearchForm: React.FC<SearchFormProps> = ({ stationIndex, onSearch }) => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
+    useEffect(() => {
+        if (!showScoreTooltip)
+            return;
+
+        const timeoutId = window.setTimeout(() => {
+            setShowScoreTooltip(false);
+        }, 5000);
+
+        const handleScreenTouch = () => {
+            setShowScoreTooltip(false);
+        };
+
+        document.addEventListener("touchstart", handleScreenTouch);
+        document.addEventListener("mousedown", handleScreenTouch);
+
+        return () => {
+            window.clearTimeout(timeoutId);
+            document.removeEventListener("touchstart", handleScreenTouch);
+            document.removeEventListener("mousedown", handleScreenTouch);
+        };
+    }, [showScoreTooltip]);
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         setSearchTerm(value);
