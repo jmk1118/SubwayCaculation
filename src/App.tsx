@@ -210,6 +210,9 @@ const App: React.FC = () => {
                 {/* 푸터 (선택 사항) */}
                 <footer className="text-center text-gray-400 text-xs pt-4">
                     © 2026 Subway Caculation Project
+                    <div className="mt-1">
+                        Contact: jmk1118@naver.com
+                    </div>
                 </footer>
             </main>
 
