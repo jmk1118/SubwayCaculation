@@ -46,6 +46,12 @@ const App: React.FC = () => {
     const [stationIndex, setStationIndex] = useState<StationIndexMap>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isGuideOpen, setIsGuideOpen] = useState<boolean>(false);
+    const adsenseClient = import.meta.env.VITE_ADSENSE_CLIENT?.trim() ?? '';
+    const shouldLoadAds = Boolean(adsenseClient)
+        && !isLoading
+        && !isGuideOpen
+        && startStationName.trim().length > 0
+        && searchResults.length > 0;
 
     useEffect(() => {
         const token = import.meta.env.VITE_SEARCH_CONSOLE_VERIFICATION?.trim();
@@ -63,6 +69,22 @@ const App: React.FC = () => {
         meta.content = token;
         document.head.appendChild(meta);
     }, []);
+
+    useEffect(() => {
+        if (!shouldLoadAds)
+            return;
+
+        const existingScript = document.querySelector<HTMLScriptElement>(`script[data-adsense-client="${adsenseClient}"]`);
+        if (existingScript)
+            return;
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClient}`;
+        script.crossOrigin = 'anonymous';
+        script.dataset.adsenseClient = adsenseClient;
+        document.head.appendChild(script);
+    }, [adsenseClient, shouldLoadAds]);
 
     // 1. 컴포넌트 마운트 시 데이터 로드
     useEffect(() => {

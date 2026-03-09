@@ -54,6 +54,35 @@ const createGoogleMapDirectionsUrl = (startStationName: string, endStationName: 
 
 const ResultSection: React.FC<ResultSectionProps> = ({ stations, startStationName }) => {
     const canOpenMap = startStationName.trim().length > 0;
+    const hasSearched = startStationName.trim().length > 0;
+
+    if (!hasSearched) {
+        return (
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-3">
+                <h2 className="text-base font-bold text-slate-900">검색 전 안내</h2>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                    출발역과 점수를 입력하면 도달 가능한 역 목록이 표시됩니다.
+                </p>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                    결과창에서는 환승 횟수와 이동 정거장 수를 확인할 수 있습니다.
+                </p>
+            </section>
+        );
+    }
+
+    if (stations.length === 0) {
+        return (
+            <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm space-y-2">
+                <h2 className="text-base font-bold text-slate-900">검색 결과가 없습니다</h2>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                    입력한 역명 또는 점수 조건으로는 도달 가능한 역을 찾지 못했습니다.
+                </p>
+                <p className="text-sm text-slate-700 leading-relaxed">
+                    역명을 다시 확인하거나 거리 점수/환승 가중치를 조정해 다시 검색해보세요.
+                </p>
+            </section>
+        );
+    }
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
